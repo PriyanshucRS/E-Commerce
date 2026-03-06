@@ -7,7 +7,7 @@ interface WatchlistState {
 }
 
 const initialState : WatchlistState = {
-    items : []
+   items: JSON.parse(localStorage.getItem("watchlist") || "[]")
 }
 
 const watchlistSlice = createSlice({
@@ -18,11 +18,13 @@ const watchlistSlice = createSlice({
             const exists = state.items.find((item)=> item.id === action.payload.id);
             if(!exists) {
                 state.items.push(action.payload)
+             localStorage.setItem("watchlist", JSON.stringify(state.items));
             }
         } ,
           
         removeFromWatchList : (state , action: PayloadAction<number>) =>{
            state.items =  state.items.filter((item)=> item.id !== action.payload) 
+           localStorage.setItem("watchlist", JSON.stringify(state.items));
         }
     }      
 });

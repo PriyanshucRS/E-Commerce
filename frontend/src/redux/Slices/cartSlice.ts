@@ -11,7 +11,7 @@ interface CartState {
 }
 
 const initialState: CartState = {
-  items: [],
+  items: JSON.parse(localStorage.getItem("cart") || "[]"),
 };
 
 const cartSlice = createSlice({
@@ -26,9 +26,11 @@ const cartSlice = createSlice({
       } else {
         state.items.push({ ...action.payload, quantity: 1 });
       }
+      localStorage.setItem("cart", JSON.stringify(state.items));
     },
         removeFromCart: (state, action: PayloadAction<number>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
+       localStorage.setItem("cart", JSON.stringify(state.items));
     },
     
     incrementQuantity: (state, action: PayloadAction<number>) => {
