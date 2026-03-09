@@ -3,7 +3,7 @@ import {
   regitsterRequest, regitsterSuccess,regitsterFailure,loginRequest,
   loginSuccess,loginFailure
 } from '../Slices/authSlice'
-import {regApi,loginApi} from '../services/authService'
+import {regApi,loginApi} from '../api-services/authService'
 
 
 function* handleRegister(action: any){
@@ -16,6 +16,8 @@ function* handleRegister(action: any){
           yield put(regitsterFailure(error.message))
    }
 }
+
+
 
 function* handleLogin(action: any){
    try {

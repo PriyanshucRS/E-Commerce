@@ -6,7 +6,7 @@ import {type AuthState} from '../../types/authTypes'
 const initialState : AuthState = {
        user : JSON.parse(localStorage.getItem("user") || "null"),
        loading : false,
-     error : null
+       error : null
 };
 
 const authSlice = createSlice ({
@@ -20,7 +20,6 @@ const authSlice = createSlice ({
             },
               regitsterSuccess: (state, action) =>{
               state.loading = false;
-                state.user = action.payload;
             },
               regitsterFailure: (state, action) =>{
                 state.loading = false;

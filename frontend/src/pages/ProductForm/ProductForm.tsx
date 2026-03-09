@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { Package, DollarSign, Image as ImageIcon, Tag, FileText, PlusCircle, X } from 'lucide-react';
+import { Package, DollarSign, Image as ImageIcon, Tag, FileText, PlusCircle} from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { addProductRequest } from '../../redux/Slices/productSlice';
 
 export const ProductForm = () => {
+  
   const [formData, setFormData] = useState({
     title: '',
     price: '',
@@ -9,8 +12,11 @@ export const ProductForm = () => {
     category: '',
     image: '',
   });
-
+ 
   const [isSubmitting, setIsSubmitting] = useState(false);
+   const dispatch = useDispatch()
+ 
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
@@ -19,6 +25,7 @@ export const ProductForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    dispatch(addProductRequest(formData))
     setIsSubmitting(true);
      
     setTimeout(() => {

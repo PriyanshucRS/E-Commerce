@@ -13,13 +13,13 @@ interface ProductCardProps {
 const ProductCard = ({ product , showAddToCart = true}: ProductCardProps) => {
       
     const {items} = useSelector((state:RootState) => state.watchlist)
-    const isInwatch = items.some(item=> item.id === product.id)
+    const isInwatch = items.some(item=> item._id === product._id)
 
   const dispatch = useDispatch();
 
   const handleWatchlist = () => {
     if(isInwatch){
-        dispatch(removeFromWatchList(product.id));
+        dispatch(removeFromWatchList(product._id));
     }else{
         dispatch(addToWatchlist(product));
     }

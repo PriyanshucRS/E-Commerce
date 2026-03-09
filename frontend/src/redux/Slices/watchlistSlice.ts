@@ -1,33 +1,30 @@
-
 import type { Product } from "../../types/product.types";
-import {createSlice ,type PayloadAction} from "@reduxjs/toolkit";
- 
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+
 interface WatchlistState {
-    items : Product[];
+  items: Product[];
 }
 
-const initialState : WatchlistState = {
-   items: JSON.parse(localStorage.getItem("watchlist") || "[]")
-}
+const initialState: WatchlistState = {
+  items: [],
+};
 
 const watchlistSlice = createSlice({
-    name : "watchlist",
-    initialState,
-    reducers : {
-        addToWatchlist : (state, action : PayloadAction<Product>) => {
-            const exists = state.items.find((item)=> item.id === action.payload.id);
-            if(!exists) {
-                state.items.push(action.payload)
-             localStorage.setItem("watchlist", JSON.stringify(state.items));
-            }
-        } ,
-          
-        removeFromWatchList : (state , action: PayloadAction<number>) =>{
-           state.items =  state.items.filter((item)=> item.id !== action.payload) 
-           localStorage.setItem("watchlist", JSON.stringify(state.items));
-        }
-    }      
+  name: "watchlist",
+  initialState,
+  reducers: {
+    addToWatchlist: (state, action: PayloadAction<Product>) => {
+      const exists = state.items.find((item) => item._id === action.payload.id);
+      if (!exists) {
+        state.items.push(action.payload);
+      }
+    },
+
+    removeFromWatchList: (state, action: PayloadAction<number>) => {
+      state.items = state.items.filter((item) => item._id !== action.payload);
+    },
+  },
 });
 
-export const {addToWatchlist , removeFromWatchList} = watchlistSlice.actions;
+export const { addToWatchlist, removeFromWatchList } = watchlistSlice.actions;
 export default watchlistSlice.reducer;

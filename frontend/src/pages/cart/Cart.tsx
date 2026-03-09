@@ -13,7 +13,7 @@ export const Cart = () => {
   const { items } = useSelector((state: RootState) => state.cart);
   const dispatch = useDispatch();
 
-  const handleRemove = (id) => {
+  const handleRemove = (_id) => {
     Swal.fire({
       title: "Remove this item?",
       icon: "warning",
@@ -27,7 +27,7 @@ export const Cart = () => {
       iconColor: "#f87171",
     }).then((result) => {
       if (result.isConfirmed) {
-        dispatch(removeFromCart(id));
+        dispatch(removeFromCart(_id));
 
         Swal.fire({
           title: "Removed!",
@@ -54,7 +54,7 @@ export const Cart = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {items.map((item) => (
             <div
-              key={item.id}
+              key={item._id}
               className="flex flex-col bg-white p-4 rounded-lg shadow"
             >
               <ProductCard product={item} showAddToCart={false} />
@@ -62,14 +62,14 @@ export const Cart = () => {
               <div className="flex items-center justify-between mt-4 bg-gray-50 p-2 rounded-lg">
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() => dispatch(decrementQuantity(item.id))}
+                    onClick={() => dispatch(decrementQuantity(item._id))}
                     className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 font-bold"
                   >
                     -
                   </button>
                   <span className="font-bold text-lg">{item.quantity}</span>
                   <button
-                    onClick={() => dispatch(incrementQuantity(item.id))}
+                    onClick={() => dispatch(incrementQuantity(item._id))}
                     className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 font-bold"
                   >
                     +
@@ -78,7 +78,7 @@ export const Cart = () => {
 
                 <button
                   
-                  onClick={() => handleRemove(item.id)}
+                  onClick={() => handleRemove(item._id)}
                   className="p-2 text-gray-500 hover:text-red-600 transition-colors duration-200"
                 >
                   <Trash2 size={20} />
