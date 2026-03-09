@@ -1,7 +1,7 @@
 import { put, call, takeLatest } from "redux-saga/effects";
 
 import { 
-  addToCart, 
+  addToCartRequest, 
   addToCartSuccess, 
   addToCartFailure, 
   fetchCartRequest, 
@@ -35,6 +35,6 @@ function* handleFetchCart() {
 
 export function* watchCartSaga() {
 
-  yield takeLatest(addToCart.type, handleAddToCart);
+  yield takeLatest(addToCartRequest.type, handleAddToCart);
   yield takeLatest(fetchCartRequest.type, handleFetchCart);
 }

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { Product } from "../../types/product.types";
 import { addToWatchlist , removeFromWatchList} from "../../redux/Slices/watchlistSlice";
-import { addToCart } from "../../redux/Slices/cartSlice";
+import { addToCartRequest } from "../../redux/Slices/cartSlice";
 import { Heart } from "lucide-react";
 import type { RootState } from "../../redux/store/store";
 interface ProductCardProps {
@@ -27,7 +27,7 @@ const ProductCard = ({ product , showAddToCart = true}: ProductCardProps) => {
   };
 
   const handleAddToCart = () => {
-  dispatch(addToCart(product));
+  dispatch(addToCartRequest(product));
 };
   return (
     <div className="bg-white rounded-lg shadow-md relative group overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">

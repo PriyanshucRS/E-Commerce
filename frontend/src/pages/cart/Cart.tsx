@@ -1,17 +1,27 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import ProductCard from "../../components/ProductCard/ProductsCard";
+import { useEffect } from "react";
+
 import {
   incrementQuantity,
   decrementQuantity,
   removeFromCart,
+  fetchCartRequest
 } from "../../redux/Slices/cartSlice";
 import { Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 
 export const Cart = () => {
   const { items } = useSelector((state: RootState) => state.cart);
+
   const dispatch = useDispatch();
+  
+ useEffect(() => {
+  dispatch(fetchCartRequest());
+
+}, [dispatch]);
+
 
   const handleRemove = (_id) => {
     Swal.fire({
