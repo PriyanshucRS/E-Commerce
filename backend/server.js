@@ -6,7 +6,7 @@ const cors = require('cors');
 const authRoutes = require('./src/routes/authRoutes')
 const productRoutes = require('./src/routes/productRoutes')
 const cartRoutes = require("./src/routes/cartRoutes")
-
+const watchlistRoutes = require("./src/routes/watchlistRouter")
 const app = express();
 
 app.use(express.json());
@@ -15,6 +15,8 @@ app.use(cors());
 app.use('/api/auth', authRoutes);
 app.use('/api/products',productRoutes)
 app.use('/api/cart', cartRoutes)
+app.use('/api/watchlist', watchlistRoutes)
+
 
 
 mongoose.connect(process.env.MONGODB_URI)

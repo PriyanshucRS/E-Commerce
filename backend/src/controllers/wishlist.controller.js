@@ -1,13 +1,22 @@
-const WatchList = require('../models/watchList')
+const wishlistService = require('../service/wishlist.service');
 
-exports.addWatchList = async(req,res) =>{
-    try{
-          const watchList = new WatchList(req.body);
-          const saveCart = await watchList.save()
-          res.status(201).json(saveCart)
 
-    }catch(err){
-        res.status(500).json({message : err.meassage})
-
+exports.updateWishlist = async (req, res) => {
+    try {
+        const { productId } = req.body;
+        const result = await wishlistService.toggleWishlist(req.user.id, productId);
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(400).send(err.message);
     }
-}
+};
+
+
+exports.getWishlist = async (req, res) => {
+    try {
+        const result = await wishlistService.getWatchlistByUser(req.user.id);
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(400).send(err.message);
+    }
+};

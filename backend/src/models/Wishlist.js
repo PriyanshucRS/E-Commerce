@@ -5,12 +5,19 @@ const watchListSchema = new mongoose.Schema({
     userId :{
         type : mongoose.Schema.ObjectId,
         ref : 'User',
+        required :true,
     },
      
-    productId:{
-        type : mongoose.Schema.ObjectId,
-        ref : 'Product'
-    }
-},{ timestamps: true })
+  items: [{
+        productId: { 
+            type: mongoose.Schema.ObjectId, 
+            ref: 'Product',
+            required: true 
+        },
+        title: { type: String, required: true },
+        price: { type: Number, required: true },
+        image: { type: String, required: true }
+    }]
+}, { timestamps: true });
 
 module.exports = mongoose.model('watchList',watchListSchema )

@@ -17,7 +17,7 @@ function* fetchproductSaga() {
   try { 
     const fetchProdcuts = yield call(fetchProductsApi)
 
-    yield put(fetchProductSuccess(fetchProdcuts))
+    yield put(fetchProductSuccess(fetchProdcuts.data || fetchProdcuts))
     }catch(err:any) {
    yield put(fetchProductFailure(err.message))
 }

@@ -1,13 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import ProductCard from "../../components/ProductCard/ProductsCard";
-import { useEffect } from "react";
+
 
 import {
   incrementQuantity,
   decrementQuantity,
-  removeFromCart,
-  fetchCartRequest
+  removeFromCartRequest,
+  updateCartQuantityRequest 
+
 } from "../../redux/Slices/cartSlice";
 import { Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
@@ -16,14 +17,27 @@ export const Cart = () => {
   const { items } = useSelector((state: RootState) => state.cart);
 
   const dispatch = useDispatch();
-  
- useEffect(() => {
-  dispatch(fetchCartRequest());
-
-}, [dispatch]);
 
 
-  const handleRemove = (_id) => {
+const handleIncrement = (item: any) => {
+
+  const newQty = item.quantity + 1;
+ 
+  dispatch(incrementQuantity(item.productId));
+  dispatch(updateCartQuantityRequest({ id: item.productId, quantity: newQty }));
+};
+
+const handleDecrement = (item: any) => {
+  if (item.quantity > 1) {
+    const newQty = item.quantity - 1;
+    dispatch(decrementQuantity(item.productId));
+    dispatch(updateCartQuantityRequest({ id: item.productId, quantity: newQty }));
+  }
+};
+
+
+
+  const handleRemove = (id : string) => {
     Swal.fire({
       title: "Remove this item?",
       icon: "warning",
@@ -37,7 +51,7 @@ export const Cart = () => {
       iconColor: "#f87171",
     }).then((result) => {
       if (result.isConfirmed) {
-        dispatch(removeFromCart(_id));
+        dispatch(removeFromCartRequest(id));
 
         Swal.fire({
           title: "Removed!",
@@ -62,9 +76,13 @@ export const Cart = () => {
         </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {items.map((item) => (
+          {Array.isArray(items)  && items.map((item) =>{
+           if (!item) return null;
+       return   ( 
+            
+            
             <div
-              key={item._id}
+             key={item.productId || item._id || item.id} 
               className="flex flex-col bg-white p-4 rounded-lg shadow"
             >
               <ProductCard product={item} showAddToCart={false} />
@@ -72,14 +90,14 @@ export const Cart = () => {
               <div className="flex items-center justify-between mt-4 bg-gray-50 p-2 rounded-lg">
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() => dispatch(decrementQuantity(item._id))}
+                    onClick={() => handleDecrement(item)}
                     className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 font-bold"
                   >
                     -
                   </button>
                   <span className="font-bold text-lg">{item.quantity}</span>
                   <button
-                    onClick={() => dispatch(incrementQuantity(item._id))}
+                    onClick={() => handleIncrement(item)}
                     className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 font-bold"
                   >
                     +
@@ -88,7 +106,7 @@ export const Cart = () => {
 
                 <button
                   
-                  onClick={() => handleRemove(item._id)}
+                  onClick={() => handleRemove(item.productId)}
                   className="p-2 text-gray-500 hover:text-red-600 transition-colors duration-200"
                 >
                   <Trash2 size={20} />
@@ -103,7 +121,9 @@ export const Cart = () => {
                 </button>
               </div>
             </div>
-          ))}
+          )}
+          
+          )}
         </div>
       )}
     </div>

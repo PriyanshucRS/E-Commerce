@@ -1,6 +1,6 @@
 import {put ,call, takeLatest} from 'redux-saga/effects'
 import {
-  regitsterRequest, regitsterSuccess,regitsterFailure,loginRequest,
+  registerRequest, registerSuccess,registerFailure,loginRequest,
   loginSuccess,loginFailure
 } from '../Slices/authSlice'
 import {regApi,loginApi} from '../api-services/authService'
@@ -9,11 +9,11 @@ import {regApi,loginApi} from '../api-services/authService'
 function* handleRegister(action: any){
    try {
      const data = yield call(regApi,  action.payload);
-     yield put(regitsterSuccess(data))
+     yield put(registerSuccess(data))
      
 
    } catch (error : any) {
-          yield put(regitsterFailure(error.message))
+          yield put(registerFailure(error.message))
    }
 }
 
@@ -32,6 +32,6 @@ function* handleLogin(action: any){
 }
 
 export function* watchAuthSaga(){
-  yield takeLatest(regitsterRequest.type,handleRegister)
+  yield takeLatest(registerRequest.type,handleRegister)
     yield takeLatest(loginRequest.type,handleLogin)
 }

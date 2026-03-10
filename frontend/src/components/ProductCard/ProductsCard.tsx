@@ -1,45 +1,70 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { Product } from "../../types/product.types";
-import { addToWatchlist , removeFromWatchList} from "../../redux/Slices/watchlistSlice";
+
+import {
+ toggleWatchlistRequest,
+} from "../../redux/Slices/watchlistSlice";
 import { addToCartRequest } from "../../redux/Slices/cartSlice";
 import { Heart } from "lucide-react";
 import type { RootState } from "../../redux/store/store";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+
 interface ProductCardProps {
   product: Product;
   showAddToCart?: boolean;
 }
 
-
-const ProductCard = ({ product , showAddToCart = true}: ProductCardProps) => {
-      
-    const {items} = useSelector((state:RootState) => state.watchlist)
-    const isInwatch = items.some(item=> item._id === product._id)
-
+const ProductCard = ({ product, showAddToCart = true }: ProductCardProps) => {
+  const { items } = useSelector((state: RootState) => state.watchlist);
+ const isInwatch = items.some((item: any) => 
+  (item.productId || item._id || item.id) === (product._id || product.id)
+);
+  const { user } = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleWatchlist = () => {
-    if(isInwatch){
-        dispatch(removeFromWatchList(product._id));
-    }else{
-        dispatch(addToWatchlist(product));
-    }
-    
+  
+  const isLoggedIn = () => {
+  if (user) return true; 
+  
+  
+  Swal.fire({
+    title: "Login Required!",
+    text: "Please login to continue.",
+    icon: "info",
+    showCancelButton: true,
+    reverseButtons: true,
+    confirmButtonText: "Login",
+  }).then((res) => { if (res.isConfirmed) navigate("/login"); });
+  
+  return false;
+};
+   
+
+  const handleWatchlist = (productId) => {
+    if (!isLoggedIn()) return;
+   dispatch(toggleWatchlistRequest(productId)); 
+  }
+  const handleAddToCart = () => {
+  if (!isLoggedIn()) return; 
+  dispatch(addToCartRequest(product));
   };
 
-  const handleAddToCart = () => {
-  dispatch(addToCartRequest(product));
-};
+ 
+
   return (
     <div className="bg-white rounded-lg shadow-md relative group overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">
-        <button
-          onClick={ handleWatchlist}
-          className="absolute top-3 right-3 z-10 p-2 bg-white/80 rounded-full shadow-sm hover:bg-white transition-all text-gray-400 hover:text-red-500"
-        >
-    <Heart 
-  size={20} 
-  className={isInwatch ? "text-red-500 fill-red-500" : "text-gray-400"} 
-/>
-        </button>
+      <button
+        onClick={()=> handleWatchlist(product.id || product._id)}
+       
+        className="absolute top-3 right-3 z-10 p-2 bg-white/80 rounded-full shadow-sm hover:bg-white transition-all text-gray-400 hover:text-red-500"
+      >
+        <Heart
+          size={20}
+          className={isInwatch ? "text-red-500 fill-red-500" : "text-gray-400"}
+        />
+      </button>
       <div className="h-48 flex items-center justify-center p-4">
         <img
           src={product.image}
@@ -61,15 +86,18 @@ const ProductCard = ({ product , showAddToCart = true}: ProductCardProps) => {
       <div className="p-4 border-t border-gray-100 flex justify-between items-center">
         <span className="text-lg font-bold">${product.price}</span>
 
-    {showAddToCart && (
-        <button onClick={handleAddToCart} className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-md cursor-pointer">
-          Add to Cart
-        </button>
-      )}
-    
+        {showAddToCart && (
+          <button
+            onClick={handleAddToCart}
+            className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-md cursor-pointer"
+          >
+            Add to Cart
+          </button>
+        )}
       </div>
     </div>
   );
 };
+
 
 export default ProductCard;

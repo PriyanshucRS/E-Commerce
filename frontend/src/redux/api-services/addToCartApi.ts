@@ -34,3 +34,16 @@ export const fetchCartApi = async () => {
     throw new Error(error.response?.data?.message || "Failed to fetch cart");
   }
 };
+
+export const deleteCartApi = async (productId : string) => {
+  try {
+    const res= await api.delete(`/cart/remove/${productId}`);
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "Failed to remove item");
+  }
+};
+
+export const updateCartQuantityApi = async (productId: string, quantity: number) => {
+  return await api.post('/cart/update', { productId, quantity });
+};

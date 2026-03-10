@@ -5,6 +5,8 @@ import cartIcon from "../../assets/cartLogo.png";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import { logout } from "../../redux/Slices/authSlice";
+import { clearCart } from "../../redux/Slices/cartSlice";
+import { clearWatchList } from "../../redux/Slices/watchlistSlice";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +21,8 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(clearCart());
+    dispatch(clearWatchList())
   };
 
   return (

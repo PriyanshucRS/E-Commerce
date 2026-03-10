@@ -1,12 +1,12 @@
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import { regitsterRequest } from "../../redux/Slices/authSlice";
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link ,useNavigate } from "react-router-dom";
+import {registerRequest } from "../../redux/Slices/authSlice";
+import { useEffect, useState } from "react";
 import { PasswordInput } from "../../components/PasswordInput/PasswordInput";
 
 export const Register = () => {
   const dispatch = useDispatch();
-
+    const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -14,6 +14,8 @@ export const Register = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const { isRegistered } = useSelector((state: any) => state.auth);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -24,17 +26,24 @@ export const Register = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+   dispatch(registerRequest(formData));
+  } 
+       
+  useEffect(()=>{
+    if(isRegistered){
+          alert('Registred successfully!');
 
-    dispatch(regitsterRequest(formData));
-    alert("Register Succefully");
-    setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    });
-  };
+          const timer = setTimeout(()=>{
+            setFormData({ firstName: '', lastName: '', email: '',password: '', confirmPassword: ''})
+             navigate('/login')
+          },500)
+   
+          return ()=> clearTimeout(timer)
+               }
+  },[isRegistered ,navigate])
+  
+   
+  
 
   return (
     <div className="h-screen overflow-y-auto flex items-center justify-center bg-gray-500 px-4">

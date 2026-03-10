@@ -1,30 +1,27 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const authService = require('../service/auth.service'); 
 
 exports.register = async (req, res) => {
     try {
-        const { firstName, lastName, email, password, confirmPassword } = req.body;
+        // Sirf service ko data pass karein
+        const result = await authService.registerUser(req.body);
         
-        if (password !== confirmPassword) {
-            return res.status(400).send("Passwords do not match");
-        }
-
-        const user = new User({ firstName, lastName, email, password });
-        await user.save();
-        res.status(201).send({ message: "User registered" });
+        // Success response
+        res.status(201).json({ message: "User registered", user: result });
     } catch (err) {
-        res.status(400).send(err.message)
+        // Error handling (400 Bad Request)
+        res.status(400).send(err.message);
     }
+};
 
-}
-
-exports.login = async(req, res) =>{
-   const user = await User.findOne({ email: req.body.email });
-    if(!user || !(await bcrypt.compare(req.body.password, user.password))){
-        return res.status(401).send("Invalid credentials");
+exports.login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const result = await authService.loginUser(email, password);
+        
+        // Token aur user data response mein bhejein
+        res.status(200).json(result);
+    } catch (err) {
+        // Error handling (401 Unauthorized)
+        res.status(401).send(err.message);
     }
-   const token = jwt.sign({id : user._id}, process.env.JWT_SECRET,{ expiresIn : '1d'})
-    res.send({ token });
-
-}
+};

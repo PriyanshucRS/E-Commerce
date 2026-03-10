@@ -6,7 +6,8 @@ import {type AuthState} from '../../types/authTypes'
 const initialState : AuthState = {
        user : JSON.parse(localStorage.getItem("user") || "null"),
        loading : false,
-       error : null
+       error : null,
+      isRegistered: false 
 };
 
 const authSlice = createSlice ({
@@ -14,14 +15,17 @@ const authSlice = createSlice ({
         name :"auth",
         initialState,
         reducers : {
-            regitsterRequest: (state, action: PayloadAction<any>) =>{
+            registerRequest: (state, action: PayloadAction<any>) =>{
                 state.loading = true;
-                state.error = null;
+                state.error = null ;
+                state.isRegistered = false
             },
-              regitsterSuccess: (state, action) =>{
-              state.loading = false;
+              registerSuccess: (state, action) =>{
+              state.loading = false;  
+              state.isRegistered = true
+
             },
-              regitsterFailure: (state, action) =>{
+              registerFailure: (state, action) =>{
                 state.loading = false;
                 state.error = action.payload;
             },
@@ -50,7 +54,7 @@ const authSlice = createSlice ({
 });
 
 export const {
-  regitsterRequest, regitsterSuccess,regitsterFailure,loginRequest,
+  registerRequest, registerSuccess,registerFailure,loginRequest,
   loginSuccess,loginFailure , logout
 } = authSlice.actions
 export default authSlice.reducer

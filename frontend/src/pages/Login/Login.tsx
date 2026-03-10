@@ -15,28 +15,36 @@ export const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
-  }, [user, navigate]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
     });
-  };
+  }
+ 
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    dispatch(loginRequest(formData));
+  e.preventDefault();
+  dispatch(loginRequest(formData));
+};
 
-    setFormData({
-      email: "",
-      password: "",
-    });
-  };
+useEffect(() => {
+ 
+  if (user) {
+    alert('Login successfully!');
+   
+    const timer = setTimeout(() => {
+    setFormData({ email: '', password: '' });
+      navigate("/");
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }
+}, [user, navigate]); 
+
+
 
   return (
     <div className="h-screen overflow-y-auto flex items-center justify-center bg-gray-500 px-4">

@@ -1,52 +1,50 @@
-const Cart = require('../models/Cart');
+const cartService = require('../service/cart.service');
 
 exports.addToCart = async (req, res) => {
-  const { productId, quantity } = req.body;
-  const userId = req.user.id; 
-
-  try {
-    let cart = await Cart.findOne({ userId });
-
-    if (!cart) {
-      
-      cart = new Cart({ userId, items: [{ productId, quantity: quantity || 1 }] });
-    } else {
-     
-      const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
-
-      if (itemIndex > -1) {
-     
-        cart.items[itemIndex].quantity += (quantity || 1);
-      } else {
-        
-        cart.items.push({ productId, quantity: quantity || 1 });
-      }
+    try {
+        const { productId, quantity } = req.body;
+        const result = await cartService.addItemToCart(req.user.id, productId, quantity);
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(400).send(err.message);
     }
+};
 
-    await cart.save();
-   
-    const updatedCart = await Cart.findOne({ userId }).populate('items.productId');
-    res.status(200).json(updatedCart);
+exports.deleteFromCart = async (req, res) => {
+    try {
+        const { productId } = req.params; 
+        const userId = req.user.id; 
+        
+        await cartService.removeItemFromCart(req.user.id, productId);
 
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+        const updatedCart = await cartService.removeItemFromCart(userId, productId);
+        
+        res.status(200).json({
+            message: "Item removed from cart",
+            cart: updatedCart
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 };
 
 exports.getCart = async (req, res) => {
-  try {
-    const userId = req.user.id; 
-
-    
-    const cart = await Cart.findOne({ userId }).populate('items.productId');
-
-    if (!cart) {
-     
-      return res.status(200).json({ items: [] });
+    try {
+        const userId = req.user.id; 
+        const cart = await cartService.getCartByUserId(userId);
+        res.status(200).json(cart);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
+};
 
-    res.status(200).json(cart);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+
+exports.updateQuantity = async (req, res) => {
+    try {
+        const { productId, quantity } = req.body;
+        const result = await cartService.updateItemQuantity(req.user.id, productId, quantity);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 };
