@@ -43,7 +43,7 @@ export const Cart = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-10 min-h-[calc(100vh-80px)]">
+    <div className="container mx-auto px-4 py-10 ">
       <div className="flex items-center justify-between mb-10 border-b dark:border-gray-800 pb-5 transition-colors duration-300">
         <h2 className="text-4xl font-extrabold text-gray-800 dark:text-gray-100 flex items-center gap-3">
           <ShoppingBag className="text-blue-600 dark:text-blue-400" size={36} />

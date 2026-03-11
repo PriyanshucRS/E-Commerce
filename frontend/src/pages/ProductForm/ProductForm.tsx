@@ -58,10 +58,13 @@ export const ProductForm = () => {
       category: "",
       image: "",
     });
+    
   };
 
+  
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8 px-4 transition-colors duration-300">
+   <div className="bg-gray-50 dark:bg-gray-950 py-4 px-4 transition-colors duration-300 overflow-hidden mt-8">
       <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700">
         
         {/* Header */}
@@ -74,7 +77,7 @@ export const ProductForm = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4 ">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Title */}
             <div className="space-y-1">
@@ -127,7 +130,7 @@ export const ProductForm = () => {
             </label>
             <select
               id="category"
-              className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition appearance-none"
+             className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition appearance-none resize-none"
               value={formData.category}
               onChange={handleChange}
               required

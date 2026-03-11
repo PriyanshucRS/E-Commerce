@@ -8,7 +8,7 @@ export const WatchList = () => {
   }));
 
   return (
-    <div className="container mx-auto px-4 py-8  min-h-[calc(100vh-64px)] overflow-hidden">
+    <div className="container mx-auto px-4 py-8">
       <h2 className="flex items-center justify-center text-3xl font-bold mb-6 pb-2">
         My WatchList
       </h2>
