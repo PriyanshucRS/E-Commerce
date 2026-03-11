@@ -7,6 +7,7 @@ interface CartItem extends Product {
 
 interface CartState {
   items: CartItem[];
+  totalPrice: number;
   loading: boolean;
   error: string | null;
 }
@@ -15,6 +16,7 @@ const initialState: CartState = {
   items: [],
   loading: false,
   error: null,
+  totalPrice: 0,
 };
 
 const cartSlice = createSlice({
@@ -25,15 +27,16 @@ const cartSlice = createSlice({
       state.loading = true;
     },
 
-fetchCartSuccess: (state, action: PayloadAction<any>) => {
-  state.loading = false;
-  
-  const responseData = action.payload.data || action.payload;
-  const newItems = responseData.items || (Array.isArray(responseData) ? responseData : []);
+    fetchCartSuccess: (state, action: PayloadAction<any>) => {
+      state.loading = false;
+      const responseData = action.payload.data || action.payload;
+      state.totalPrice = action.payload.totalPrice;
+      const newItems =
+        responseData.items || (Array.isArray(responseData) ? responseData : []);
 
-  state.items = newItems;
-  localStorage.setItem("cart", JSON.stringify(state.items));
-},
+      state.items = newItems;
+      localStorage.setItem("cart", JSON.stringify(state.items));
+    },
 
     fetchCartFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
@@ -43,9 +46,12 @@ fetchCartSuccess: (state, action: PayloadAction<any>) => {
     addToCartRequest: (state, action: PayloadAction<Product>) => {
       state.loading = true;
     },
+
     addToCartSuccess: (state, action: PayloadAction<any>) => {
       state.loading = false;
-      state.items = action.payload.items;
+      const data = action.payload.data || action.payload;
+      state.totalPrice = action.payload.totalPrice;
+      state.items = data.items || (Array.isArray(data) ? data : state.items);
       localStorage.setItem("cart", JSON.stringify(state.items));
     },
     addToCartFailure: (state, action: PayloadAction<string>) => {
@@ -59,31 +65,16 @@ fetchCartSuccess: (state, action: PayloadAction<any>) => {
 
     removeFromCartSuccess: (state, action: PayloadAction<any>) => {
       state.loading = false;
-
-      if (action.payload && action.payload.cart) {
-        state.items = action.payload.cart.items;
-      }
+      const data = action.payload.data || action.payload;
+      state.items =
+        data.items ||
+        data.cart?.items ||
+        (Array.isArray(data) ? data : state.items);
       localStorage.setItem("cart", JSON.stringify(state.items));
     },
     removeFromCartFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
       state.error = action.payload;
-    },
-
-    incrementQuantity: (state, action: PayloadAction<string>) => {
-      const item = state.items.find((item: any) => item._id === action.payload);
-      if (item) {
-        item.quantity += 1;
-        localStorage.setItem("cart", JSON.stringify(state.items));
-      }
-    },
-
-    decrementQuantity: (state, action: PayloadAction<string>) => {
-      const item = state.items.find((item: any) => item._id === action.payload);
-      if (item && item.quantity > 1) {
-        item.quantity -= 1;
-        localStorage.setItem("cart", JSON.stringify(state.items));
-      }
     },
 
     updateCartQuantityRequest: (
@@ -93,33 +84,34 @@ fetchCartSuccess: (state, action: PayloadAction<any>) => {
       state.loading = true;
     },
 
-updateCartQuantitySuccess: (state, action: PayloadAction<any>) => {
-  state.loading = false;
-  
-  
-  if (action.payload.data && Array.isArray(action.payload.data.items)) {
-    state.items = action.payload.data.items;
-    localStorage.setItem("cart", JSON.stringify(state.items));
-  } else {
-    console.error("Payload data is missing items array:", action.payload);
-  }
-},
+    updateCartQuantitySuccess: (state, action: PayloadAction<any>) => {
+      state.loading = false;
+      const data = action.payload.data || action.payload;
+
+      if (data && Array.isArray(action.payload.data.items)) {
+        state.items = data.items;
+        state.totalPrice = data.totalPrice;
+        localStorage.setItem("cart", JSON.stringify(state.items));
+      } else {
+        console.error("Payload data is missing items array:", action.payload);
+      }
+    },
 
     updateCartQuantityFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
-   const newItems =   state.error = action.payload;
-    if (Array.isArray(newItems)) {
-    state.items = newItems;
-    localStorage.setItem("cart", JSON.stringify(state.items));
-  }
-},
+      const newItems = (state.error = action.payload);
+      if (Array.isArray(newItems)) {
+        state.items = newItems;
+        localStorage.setItem("cart", JSON.stringify(state.items));
+      }
+    },
 
-clearCart: (state) => {
-  state.items = [];
-  state.loading = false;
-  state.error = null;
-  localStorage.removeItem("cart"); 
-},
+    clearCart: (state) => {
+      state.items = [];
+      state.loading = false;
+      state.error = null;
+      localStorage.removeItem("cart");
+    },
   },
 });
 
@@ -133,12 +125,10 @@ export const {
   removeFromCartRequest,
   removeFromCartSuccess,
   removeFromCartFailure,
-  incrementQuantity,
-  decrementQuantity,
   updateCartQuantityRequest,
   updateCartQuantitySuccess,
   updateCartQuantityFailure,
-  clearCart
+  clearCart,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

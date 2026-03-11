@@ -14,6 +14,6 @@ export const toggleWatchlistApi = async (productId: string) => {
 };
 
 export const fetchWatchlistApi = async () => {
-  const res = await api.get('/watchlist');
+  const res = await api.get("/watchlist");
   return res.data;
 };

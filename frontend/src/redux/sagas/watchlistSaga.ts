@@ -1,12 +1,13 @@
-// [./src/redux/Sagas/watchlistSaga.ts](./src/redux/Sagas/watchlistSaga.ts)
-
 import { put, call, takeLatest } from "redux-saga/effects";
-import { toggleWatchlistApi, fetchWatchlistApi } from "../api-services/wishlistApi";
-import { 
-  toggleWatchlistRequest, 
-  fetchWatchlistRequest, 
-  fetchWatchlistSuccess, 
-  fetchWatchlistFailure 
+import {
+  toggleWatchlistApi,
+  fetchWatchlistApi,
+} from "../api-services/wishlistApi";
+import {
+  toggleWatchlistRequest,
+  fetchWatchlistRequest,
+  fetchWatchlistSuccess,
+  fetchWatchlistFailure,
 } from "../Slices/watchlistSlice";
 
 function* handleFetchWatchlist() {

@@ -1,77 +1,99 @@
-const Cart = require('../models/Cart');
-const Product = require('../models/Product');
+const Cart = require("../models/Cart");
+const Product = require("../models/Product");
 
+const calculateTotal = (items) => {
+  return items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+};
 
 const getCartByUserId = async (userId) => {
-   
-    return await Cart.findOne({ userId });
+  const cart = await Cart.findOne({ userId });
+  if (!cart) return { items: [], totalPrice: 0 };
+  return { items: cart.items, totalPrice: calculateTotal(cart.items) };
 };
-
 
 const addItemToCart = async (userId, productId, quantity) => {
-    const product = await Product.findById(productId);
-    if (!product) throw new Error("Product not found");
+  const product = await Product.findById(productId);
+  if (!product) throw new Error("Product not found");
 
-    let cart = await Cart.findOne({ userId });
+  let cart = await Cart.findOne({ userId });
 
-    if (!cart) {
-      
-        cart = new Cart({
-            userId,
-            items: [{
-                productId,
-                title: product.title,
-                price: product.price,
-                image: product.image,
-                quantity
-            }]
-        });
+  if (!cart) {
+    cart = new Cart({
+      userId,
+      items: [
+        {
+          productId,
+          title: product.title,
+          price: product.price,
+          image: product.image,
+          category: product.category,
+          description: product.description,
+          quantity,
+        },
+      ],
+    });
+  } else {
+    const itemIndex = cart.items.findIndex(
+      (item) => item.productId.toString() === productId,
+    );
+    if (itemIndex > -1) {
+      cart.items[itemIndex].quantity += quantity;
     } else {
-        const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
-        
-        if (itemIndex > -1) {
-          
-            cart.items[itemIndex].quantity += quantity;
-        } else {
-            
-            cart.items.push({
-                productId,
-                title: product.title,
-                price: product.price,
-                image: product.image,
-                quantity
-            });
-        }
+      cart.items.push({
+        productId,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        category: product.category,
+        description: product.description,
+        quantity,
+      });
     }
-    return await cart.save();
+  }
+  const savedCart = await cart.save();
+  return {
+    items: savedCart.items,
+    totalPrice: calculateTotal(savedCart.items),
+  };
 };
-
 
 const updateItemQuantity = async (userId, productId, quantity) => {
-    const cart = await Cart.findOne({ userId });
-    if (!cart) throw new Error("Cart not found");
+  const cart = await Cart.findOne({ userId });
+  if (!cart) throw new Error("Cart not found");
 
-    const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
-    if (itemIndex > -1) {
-        cart.items[itemIndex].quantity = quantity;
-        return await cart.save();
-    } else {
-        throw new Error("Item not found in cart");
-    }
+  const itemIndex = cart.items.findIndex(
+    (item) => item.productId.toString() === productId,
+  );
+  if (itemIndex > -1) {
+    cart.items[itemIndex].quantity = quantity;
+    const savedCart = await cart.save();
+    return {
+      items: savedCart.items,
+      totalPrice: calculateTotal(savedCart.items),
+    };
+  } else {
+    throw new Error("Item not found in cart");
+  }
 };
-
 
 const removeItemFromCart = async (userId, productId) => {
-    const cart = await Cart.findOne({ userId });
-    if (!cart) throw new Error("Cart not found");
+  const cart = await Cart.findOne({ userId });
+  if (!cart) throw new Error("Cart not found");
 
-    cart.items = cart.items.filter(item => item.productId.toString() !== productId);
-    return await cart.save();
+  cart.items = cart.items.filter(
+    (item) => item.productId.toString() !== productId,
+  );
+  const savedCart = await cart.save();
+  return {
+    items: savedCart.items,
+    totalPrice: calculateTotal(savedCart.items),
+  };
 };
 
-module.exports = { 
-    getCartByUserId, 
-    addItemToCart, 
-    updateItemQuantity, 
-    removeItemFromCart 
+module.exports = {
+  getCartByUserId,
+  addItemToCart,
+  updateItemQuantity,
+  removeItemFromCart,
+  calculateTotal,
 };

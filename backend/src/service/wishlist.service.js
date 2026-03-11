@@ -1,11 +1,9 @@
 const WatchList = require("../models/Wishlist");
 const Product = require("../models/Product");
 
-
 const getWatchlistByUser = async (userId) => {
   return await WatchList.findOne({ userId });
 };
-
 
 const toggleWishlist = async (userId, productId) => {
   let watchlist = await WatchList.findOne({ userId });
@@ -22,6 +20,8 @@ const toggleWishlist = async (userId, productId) => {
           title: product.title,
           price: product.price,
           image: product.image,
+          category: product.category,
+          description: product.description,
         },
       ],
     });
@@ -43,6 +43,8 @@ const toggleWishlist = async (userId, productId) => {
       title: product.title,
       price: product.price,
       image: product.image,
+      category: product.category,
+      description: product.description,
     });
   }
 

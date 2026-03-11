@@ -25,7 +25,9 @@ export const WatchList = () => {
                 product={{
                   ...item,
                   _id: item.productId,
+                  
                 }}
+                showdeleteProduct = {false}
               />
             </div>
           ))}

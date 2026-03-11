@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+
 body {
-  @apply m-0;
+  @apply m-0 transition-colors duration-300;
+}
+
+@theme {
+  --color-scheme: light dark;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

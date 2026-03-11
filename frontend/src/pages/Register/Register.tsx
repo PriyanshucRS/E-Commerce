@@ -1,12 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Link ,useNavigate } from "react-router-dom";
-import {registerRequest } from "../../redux/Slices/authSlice";
+import { Link, useNavigate } from "react-router-dom";
+import { registerRequest,clearError  } from "../../redux/Slices/authSlice";
 import { useEffect, useState } from "react";
 import { PasswordInput } from "../../components/PasswordInput/PasswordInput";
 
 export const Register = () => {
   const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -15,9 +15,15 @@ export const Register = () => {
     confirmPassword: "",
   });
 
-  const { isRegistered } = useSelector((state: any) => state.auth);
+  const { isRegistered , error } = useSelector((state: any) => state.auth);
 
+const handleInputClick = () => {
+    if (error) {
+      dispatch(clearError());
+    }
+  }
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
@@ -26,29 +32,32 @@ export const Register = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-   dispatch(registerRequest(formData));
-  } 
-       
-  useEffect(()=>{
-    if(isRegistered){
-          alert('Registred successfully!');
+    dispatch(registerRequest(formData));
+  };
 
-          const timer = setTimeout(()=>{
-            setFormData({ firstName: '', lastName: '', email: '',password: '', confirmPassword: ''})
-             navigate('/login')
-          },500)
-   
-          return ()=> clearTimeout(timer)
-               }
-  },[isRegistered ,navigate])
-  
-   
-  
+  useEffect(() => {
+    if (isRegistered) {
+      alert("Registred successfully!");
+
+      const timer = setTimeout(() => {
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+        });
+        navigate("/login");
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isRegistered, navigate]);
 
   return (
-    <div className="h-screen overflow-y-auto flex items-center justify-center bg-gray-500 px-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-6">
-        <h1 className="text-red-500 font-bold text-center text-xl">
+    <div className="h-screen overflow-y-auto flex items-center justify-center bg-gray-500 dark:bg-gray-950 px-4 transition-colors duration-300">
+      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        <h1 className="text-red-500 font-bold text-center text-xl mb-6">
           Registration Page
         </h1>
 
@@ -57,7 +66,7 @@ export const Register = () => {
             <div>
               <label
                 htmlFor="firstName"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
               >
                 First Name
               </label>
@@ -66,9 +75,7 @@ export const Register = () => {
                 type="text"
                 value={formData.firstName}
                 placeholder="Enter your first name"
-                className="w-full px-4 py-2 border
-           border-gray-300 rounded-lg focus:ring-2
-            focus:ring-blue-500 focus:border-transparent outline-none transition"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
                 required
                 onChange={handleChange}
               />
@@ -76,7 +83,7 @@ export const Register = () => {
             <div>
               <label
                 htmlFor="lastName"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
               >
                 Last Name
               </label>
@@ -85,9 +92,7 @@ export const Register = () => {
                 type="text"
                 value={formData.lastName}
                 placeholder="Enter your last name"
-                className="w-full px-4 py-2 border
-           border-gray-300 rounded-lg focus:ring-2
-            focus:ring-blue-500 focus:border-transparent outline-none transition"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
                 required
                 onChange={handleChange}
               />
@@ -95,7 +100,7 @@ export const Register = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
               >
                 Email
               </label>
@@ -104,11 +109,10 @@ export const Register = () => {
                 type="email"
                 value={formData.email}
                 placeholder="Enter your email"
-                className="w-full px-4 py-2 border
-           border-gray-300 rounded-lg focus:ring-2
-            focus:ring-blue-500 focus:border-transparent outline-none transition"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
                 required
                 onChange={handleChange}
+                 onFocus={handleInputClick}
               />
             </div>
             <div>
@@ -132,22 +136,26 @@ export const Register = () => {
           </div>
           <div>
             <button
-              className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold
-         hover:bg-blue-700 transition-all shadow-md"
+              className="w-full bg-blue-600 dark:bg-blue-700 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 dark:hover:bg-blue-600 transition-all shadow-md active:scale-95"
             >
               Register
             </button>
           </div>
+           {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative text-sm mb-4">
+              {error}
+            </div>
+          )}
         </form>
-        <p className="text-center text-gray-600 mt-4">
+        <p className="text-center text-gray-600 dark:text-gray-400 mt-4">
           Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 font-bold hover:underline">
+          <Link to="/login" className="text-blue-600 dark:text-blue-400 font-bold hover:underline">
             Login
           </Link>
           <br />
           <Link
             to="/"
-            className="text-blue-600 font-bold hover:underline text-sm"
+            className="text-blue-600 dark:text-blue-400 font-bold hover:underline text-sm"
           >
             Home
           </Link>

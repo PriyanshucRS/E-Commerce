@@ -34,12 +34,30 @@ const productSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    deleteProductRequest: (state, action: PayloadAction<string>) => {
+      state.loading = true;
+    },
+    deleteProductSuccess: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.products = state.products.filter(p => (p._id || p.id) !== action.payload);
+    },
+    deleteProductFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
-export const { fetchProductRequest, fetchProductSuccess, fetchProductFailure,
-  addProductRequest,addProductSuccess, addProductFailure
- } =
-  productSlice.actions;
+export const {
+  fetchProductRequest,
+  fetchProductSuccess,
+  fetchProductFailure,
+  addProductRequest,
+  addProductSuccess,
+  addProductFailure,
+  deleteProductRequest,
+  deleteProductSuccess,
+  deleteProductFailure,
+} = productSlice.actions;
 
 export default productSlice.reducer;

@@ -5,7 +5,6 @@ const api = axios.create({ baseURL: "http://localhost:5000/api" });
 
 api.interceptors.request.use((config) => {
   const user = JSON.parse(localStorage.getItem("user") || "null");
- 
 
   if (user?.token) {
     config.headers.Authorization = `Bearer ${user.token}`;
@@ -35,15 +34,18 @@ export const fetchCartApi = async () => {
   }
 };
 
-export const deleteCartApi = async (productId : string) => {
+export const deleteCartApi = async (productId: string) => {
   try {
-    const res= await api.delete(`/cart/remove/${productId}`);
+    const res = await api.delete(`/cart/remove/${productId}`);
     return res.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || "Failed to remove item");
   }
 };
 
-export const updateCartQuantityApi = async (productId: string, quantity: number) => {
-  return await api.post('/cart/update', { productId, quantity });
+export const updateCartQuantityApi = async (
+  productId: string,
+  quantity: number,
+) => {
+  return await api.post("/cart/update", { productId, quantity });
 };

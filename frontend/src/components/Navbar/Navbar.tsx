@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
 import cartIcon from "../../assets/cartLogo.png";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import { logout } from "../../redux/Slices/authSlice";
 import { clearCart } from "../../redux/Slices/cartSlice";
 import { clearWatchList } from "../../redux/Slices/watchlistSlice";
+import logo from "../../assets/logo.png";
+import { useTheme } from "../../context/ThemeContext";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
   const { items: watchItems } = useSelector(
     (state: RootState) => state.watchlist,
   );
@@ -22,56 +25,59 @@ export const Navbar = () => {
   const handleLogout = () => {
     dispatch(logout());
     dispatch(clearCart());
-    dispatch(clearWatchList())
+    dispatch(clearWatchList());
   };
 
   return (
     <header className="fixed top-0 left-0 w-full z-50">
-      <nav className="flex items-center justify-between px-6 md:px-10 py-4 bg-gray-100 shadow-md">
-        <div className="text-xl md:text-2xl font-bold text-blue-600">
-          <Link to="/">E-Commerce Website</Link>
+      <nav className="flex items-center justify-between px-6 md:px-10 py-4 bg-gray-100 dark:bg-gray-900 shadow-md transition-colors duration-300">
+        <div className="flex text-xl md:text-2xl font-bold text-blue-600 gap-4">
+          <img
+            src={logo}
+            alt="logo"
+            className="h-14 w-auto transition-transform group-hover:scale-110"
+          />
+          <Link to="/" className="mt-3.5 dark:text-blue-400">
+            E-Commerce Website
+          </Link>
         </div>
 
         {/* Desktop Menu */}
-        <ul className="hidden md:flex items-center space-x-10">
-          <li>
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `font-medium transition-all duration-200 pb-1 
-             ${isActive ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-600 hover:text-blue-500"}`
-              }
-            >
-              Home
-            </NavLink>
-          </li>
-        </ul>
+        <div className="hidden md:flex items-center flex-1 justify-end space-x-4">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `font-medium transition-all duration-200 pb-1 
+             ${isActive ? "text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400" : "text-gray-600 hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-400"}`
+            }
+          >
+            Home
+          </NavLink>
 
-        <div className="hidden md:flex items-center space-x-6">
           {user && (
             <NavLink
               to="/addproduct"
               className={({ isActive }) =>
-                `text-gray-700 hover:text-blue-600 transition-colors ${
-                  isActive ? "text-blue-600 font-semibold" : ""
+                `text-gray-700 hover:text-blue-600 transition-colors dark:text-gray-300 dark:hover:text-blue-400 ${
+                  isActive
+                    ? "text-blue-600 font-semibold border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400"
+                    : ""
                 }`
               }
             >
               Add Product
             </NavLink>
           )}
-        </div>
 
-        <div className="hidden md:flex items-center space-x-6">
           <NavLink
             to="/watchlist"
             className="flex items-center gap-1 p-2 group"
           >
-            <h2 className="text-gray-600 group-hover:text-blue-500 transition-colors">
+            <h2 className="text-gray-600 group-hover:text-blue-500 transition-colors dark:text-gray-300 dark:group-hover:text-blue-400">
               WatchList
             </h2>
             {watchCount > 0 && (
-              <span className="bg-gray-200 text-gray-700 text-[12px] font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
+              <span className="bg-gray-200 dark:bg-gray-700 dark:text-gray-200 text-gray-700 text-[12px] font-bold px-2 py-0.5 rounded-full min-w-5 text-center">
                 {watchCount}
               </span>
             )}
@@ -86,27 +92,44 @@ export const Navbar = () => {
               <img
                 src={cartIcon}
                 alt="cartLogo"
-                className="h-10 w-auto transition-transform group-hover:scale-110"
+                className="h-10 w-auto transition-transform group-hover:scale-110 dark:invert"
               />
               <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                 {cartCount}
               </span>
             </div>
-            <span className="text-[11px] font-medium text-gray-500 group-hover:text-blue-500 transition-colors -mt-1">
-             My Cart
+            <span className="text-[11px] font-medium text-gray-500 group-hover:text-blue-500 transition-colors -mt-1 dark:text-gray-400 dark:group-hover:text-blue-400">
+              My Cart
             </span>
           </NavLink>
-          <div className="flex items-center space-x-4">
+
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-gray-300"
+            aria-label="Toggle theme"
+          >
+            {theme === "light" ? (
+              <Moon size={22} />
+            ) : (
+              <Sun size={22} className="text-yellow-400" />
+            )}
+          </button>
+
+          <div className="flex items-center">
             {user ? (
-              <button
-                onClick={handleLogout}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-all"
-              >
-                Logout
-              </button>
+              
+              
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-all ml-2 shadow-sm"
+                >
+                  Logout
+                </button>
+            
             ) : (
               <NavLink to="/login">
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
+                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all ml-2 shadow-sm">
                   Login
                 </button>
               </NavLink>
@@ -115,10 +138,21 @@ export const Navbar = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center">
+        <div className="md:hidden flex items-center gap-4">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-gray-300"
+            aria-label="Toggle theme"
+          >
+            {theme === "light" ? (
+              <Moon size={24} />
+            ) : (
+              <Sun size={24} className="text-yellow-400" />
+            )}
+          </button>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="text-gray-600 hover:text-blue-600 focus:outline-none"
+            className="text-gray-600 dark:text-gray-300 hover:text-blue-600 focus:outline-none"
           >
             {isOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
@@ -127,18 +161,18 @@ export const Navbar = () => {
 
       {/* Mobile Menu Overlay */}
       {isOpen && (
-        <div className="md:hidden bg-gray-100 border-t border-gray-200 shadow-lg absolute w-full left-0 py-6 px-6 space-y-6 flex flex-col items-center">
+        <div className="md:hidden bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-lg absolute w-full left-0 py-6 px-6 space-y-6 flex flex-col items-center transition-colors duration-300">
           {/* Home Link */}
           <NavLink
             to="/"
             onClick={() => setIsOpen(false)}
             className={({ isActive }) =>
-                `block px-4 py-2 text-base font-medium border-l-4 transition-colors duration-200 ${
-                  isActive
-                    ? "bg-blue-50 border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
-                }`
-              }
+              `block px-4 py-2 text-base font-medium border-l-4 transition-colors duration-200 ${
+                isActive
+                  ? "bg-blue-50 dark:bg-gray-800 border-blue-600 text-blue-600 dark:text-blue-400"
+                  : "border-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 hover:text-gray-800 dark:hover:text-white"
+              }`
+            }
           >
             Home
           </NavLink>
@@ -149,8 +183,8 @@ export const Navbar = () => {
               className={({ isActive }) =>
                 `block px-4 py-2 text-base font-medium border-l-4 transition-colors duration-200 ${
                   isActive
-                    ? "bg-blue-50 border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
+                    ? "bg-blue-50 dark:bg-gray-800 border-blue-600 text-blue-600 dark:text-blue-400"
+                    : "border-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 hover:text-gray-800 dark:hover:text-white"
                 }`
               }
             >
@@ -162,48 +196,49 @@ export const Navbar = () => {
           <NavLink
             to="/watchlist"
             onClick={() => setIsOpen(false)}
-           className={({ isActive }) =>
-                `block px-4 py-2 text-base font-medium border-l-4 transition-colors duration-200 ${
-                  isActive
-                    ? "bg-blue-50 border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
-                }`
-              }
+            className={({ isActive }) =>
+              `block px-4 py-2 text-base font-medium border-l-4 transition-colors duration-200 ${
+                isActive
+                  ? "bg-blue-50 dark:bg-gray-800 border-blue-600 text-blue-600 dark:text-blue-400"
+                  : "border-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 hover:text-gray-800 dark:hover:text-white"
+              }`
+            }
           >
             WatchList
             {watchCount > 0 && (
-              <span className="bg-gray-200 text-gray-700 text-[12px] font-bold px-2 py-0.5 rounded-full">
+              <span className="bg-gray-200 dark:bg-gray-700 dark:text-gray-200 text-gray-700 text-[12px] font-bold px-2 py-0.5 rounded-full ml-2">
                 {watchCount}
               </span>
             )}
           </NavLink>
 
           {/* Cart Mobile */}
-      <NavLink
-  to="/cartview"
-  onClick={() => setIsOpen(false)}
-  className={({ isActive }) =>
-    `flex items-center gap-3 px-4 py-3 text-base font-medium border-l-4 transition-all duration-200 ${
-      isActive
-        ? "bg-blue-50 border-blue-600 text-blue-600"
-        : "border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-    }`
-  }
->
+          <NavLink
+            to="/cartview"
+            onClick={() => setIsOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 text-base font-medium border-l-4 transition-all duration-200 ${
+                isActive
+                  ? "bg-blue-50 dark:bg-gray-800 border-blue-600 text-blue-600 dark:text-blue-400"
+                  : "border-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+              }`
+            }
+          >
+            <div className="relative flex items-center justify-center">
+              <img
+                src={cartIcon}
+                alt="cart"
+                className="h-8 w-8 object-contain dark:invert"
+              />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm">
+                  {cartCount}
+                </span>
+              )}
+            </div>
 
-  <div className="relative flex items-center justify-center">
-    <img src={cartIcon} alt="cart" className="h-8 w-8 object-contain" />
-    {cartCount > 0 && (
-      <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm">
-        {cartCount}
-      </span>
-    )}
-  </div>
-
-  
-  <span className="tracking-wide">My Cart</span>
-</NavLink>
-
+            <span className="tracking-wide">My Cart</span>
+          </NavLink>
 
           {/* Login Button Mobile */}
           <div className="flex items-center space-x-4">

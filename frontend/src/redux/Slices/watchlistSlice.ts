@@ -1,4 +1,4 @@
-import { createSlice,type  PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 const watchlistSlice = createSlice({
   name: "watchlist",
@@ -20,18 +20,19 @@ const watchlistSlice = createSlice({
     },
 
     clearWatchList: (state) => {
-  state.items = [];
-  state.loading = false;
-  state.error = null;
-  localStorage.removeItem("cart"); 
-},
-  }
+      state.items = [];
+      state.loading = false;
+      state.error = null;
+      localStorage.removeItem("cart");
+    },
+  },
 });
 
-export const { 
-   clearWatchList,
+export const {
+  clearWatchList,
   toggleWatchlistRequest,
-   fetchWatchlistRequest, 
-   fetchWatchlistSuccess, 
-   fetchWatchlistFailure } = watchlistSlice.actions;
+  fetchWatchlistRequest,
+  fetchWatchlistSuccess,
+  fetchWatchlistFailure,
+} = watchlistSlice.actions;
 export default watchlistSlice.reducer;
