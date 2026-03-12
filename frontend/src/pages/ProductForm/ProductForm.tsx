@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Package,
   DollarSign,
@@ -25,11 +25,11 @@ export const ProductForm = () => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state: RootState) => state.products);
 
-  // ✅ HANDLE SUCCESS/ERROR FROM REDUX
+ 
   useEffect(() => {
     if (isSubmitting && !loading) {
       if (!error) {
-        // ✅ SUCCESS - Clear form
+       
         setFormData({
           title: "",
           price: "",
@@ -38,7 +38,7 @@ export const ProductForm = () => {
           image: "",
         });
       }
-      // Reset submitting state
+     
       setIsSubmitting(false);
     }
   }, [loading, error, isSubmitting]);
