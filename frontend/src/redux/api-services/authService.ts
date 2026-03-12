@@ -2,8 +2,9 @@ import axios from "axios";
 import { API_URL } from "../constants/api";
 
 const AUTH_API_URL = axios.create({
-  baseURL: "http://localhost:5000/api/auth",
+  baseURL: `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api"}/auth`,
 });
+
 
 export const regApi = async (userData: any) => {
   const res = await AUTH_API_URL.post(API_URL.Register, userData);
