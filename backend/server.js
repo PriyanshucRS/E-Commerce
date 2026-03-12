@@ -1,7 +1,13 @@
 require("dotenv").config();
+
+const dns = require("node:dns/promises");
+dns.setServers(["1.1.1.1"]);
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+
+
 
 const authRoutes = require("./src/routes/authRoutes");
 const productRoutes = require("./src/routes/productRoutes");
@@ -9,8 +15,18 @@ const cartRoutes = require("./src/routes/cartRoutes");
 const watchlistRoutes = require("./src/routes/watchlistRouter");
 const app = express();
 
+const corsOptions = {
+  origin: [
+    'https://e-commerce-frontend-c6h2.onrender.com', 
+    'http://localhost:5173',
+    'https://my-api.onrender.com' 
+  ],
+}
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
-app.use(cors());
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
