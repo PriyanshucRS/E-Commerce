@@ -17,7 +17,7 @@ const app = express();
 
 const corsOptions = {
   origin: [
-    ""*"",
+    "*",
    
   ],
 }
