@@ -16,7 +16,11 @@ const watchlistRoutes = require("./src/routes/watchlistRouter");
 const app = express();
 
 const corsOptions = {
-  origin: '*', 
+  origin:[
+    'http://localhost:5173',
+    'https://e-commerce-frontend-c6h2.onrender.com'
+
+  ], 
   optionsSuccessStatus: 200
 };
 
