@@ -10,7 +10,16 @@ import Swal from "sweetalert2";
 
 export const Cart = () => {
   const { items, totalPrice } = useSelector((state: RootState) => state.cart);
+  const { products } = useSelector((state: RootState) => state.products);
   const dispatch = useDispatch();
+
+  
+  const isProductAvailable = (itemId: string) => {
+    return products.some(
+      (product: any) =>
+        (product._id || product.id) === itemId
+    );
+  };
 
   const handleIncrement = (item: any) => {
     const itemId = item.productId || item._id || item.id;
@@ -62,13 +71,26 @@ export const Cart = () => {
         <div className="flex flex-col lg:flex-row gap-10">
          
           <div className="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {items.map((item) => (
+            {items.map((item) => {
+              const itemId = item.productId || item._id || item.id;
+              const isAvailable = isProductAvailable(itemId);
+              
+              return (
               <div
-                key={item.productId || item._id || item.id}
-                className="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-gray-700 flex flex-col"
+                key={itemId}
+                className={`bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-gray-700 flex flex-col ${
+                  isAvailable ? "" : "opacity-60"
+                }`}
               >
+              
+
                 <div className="flex-1">
-                  <ProductCard product={item} showAddToCart={false} showdeleteProduct={false}/>
+                  <ProductCard 
+                    product={item} 
+                    showAddToCart={false} 
+                    showDeleteProduct={false}
+                    isUnavailable={!isAvailable}
+                  />
 
                 
                   <div className="mt-4 flex justify-between items-center bg-gray-50 dark:bg-gray-900/50 p-3 rounded-2xl border border-gray-100 dark:border-gray-700">
@@ -86,7 +108,12 @@ export const Cart = () => {
                   <div className="flex items-center gap-4 bg-white dark:bg-gray-900 px-3 py-1 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                     <button
                       onClick={() => handleDecrement(item)}
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold transition-colors"
+                      disabled={!isAvailable}
+                      className={`w-8 h-8 flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-300 font-bold transition-colors ${
+                        isAvailable
+                          ? "hover:bg-gray-100 dark:hover:bg-gray-800"
+                          : "cursor-not-allowed opacity-50"
+                      }`}
                     >
                       -
                     </button>
@@ -95,23 +122,27 @@ export const Cart = () => {
                     </span>
                     <button
                       onClick={() => handleIncrement(item)}
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold transition-colors"
+                      disabled={!isAvailable}
+                      className={`w-8 h-8 flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-300 font-bold transition-colors ${
+                        isAvailable
+                          ? "hover:bg-gray-100 dark:hover:bg-gray-800"
+                          : "cursor-not-allowed opacity-50"
+                      }`}
                     >
                       +
                     </button>
                   </div>
 
                   <button
-                    onClick={() =>
-                      handleRemove(item.productId || item._id || item.id)
-                    }
+                    onClick={() => handleRemove(itemId)}
                     className="p-3 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl transition-all"
                   >
                     <Trash2 size={22} />
                   </button>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="lg:w-1/3">
@@ -122,24 +153,32 @@ export const Cart = () => {
 
               <div className="space-y-4 mb-8">
                 <div className="max-h-48 overflow-y-auto space-y-3 pr-2 mb-6 border-b dark:border-gray-700 pb-6">
-                  {items.map((item, index) => (
+                  {items.map((item, index) => {
+                    const itemId = item.productId || item._id || item.id;
+                    const isAvailable = isProductAvailable(itemId);
+                    
+                    return (
                     <div
                       key={index}
-                      className="flex justify-between items-center text-sm"
+                      className={`flex justify-between items-center text-sm ${
+                        isAvailable ? "" : "opacity-50 line-through"
+                      }`}
                     >
                       <div className="flex flex-col">
                         <span className="font-medium text-gray-700 dark:text-gray-200 truncate w-32">
                           {item.title}
+                          {!isAvailable && <span className="text-xs text-red-500 ml-1">(Not Available)</span>}
                         </span>
                         <span className="text-gray-400 dark:text-gray-500 text-xs">
                           Qty: {item.quantity}
                         </span>
                       </div>
-                      <span className="font-bold text-gray-600 dark:text-gray-300">
+                      <span className={`font-bold ${isAvailable ? "text-gray-600 dark:text-gray-300" : "text-red-500"}`}>
                         ${(item.price * item.quantity).toFixed(2)}
                       </span>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <div className="flex justify-between text-gray-500 dark:text-gray-400">

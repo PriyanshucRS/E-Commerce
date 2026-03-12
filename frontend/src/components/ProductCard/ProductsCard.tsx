@@ -1,20 +1,22 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { Product } from "../../types/product.types";
-import { Trash2 } from "lucide-react";
+import { Trash2, Heart } from "lucide-react";
 import { toggleWatchlistRequest } from "../../redux/Slices/watchlistSlice";
 import { addToCartRequest } from "../../redux/Slices/cartSlice";
-import { Heart } from "lucide-react";
 import type { RootState } from "../../redux/store/store";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { deleteProductRequest } from "../../redux/Slices/productSlice";
+
+
 interface ProductCardProps {
-  product: Product;
+  product: Product & { userId?: string };
   showAddToCart?: boolean;
-  showdeleteProduct?: boolean
+  showDeleteProduct?: boolean;
+  isUnavailable?: boolean;
 }
 
-const ProductCard = ({ product, showAddToCart = true , showdeleteProduct=true }: ProductCardProps) => {
+const ProductCard = ({ product, showAddToCart = true , showDeleteProduct=true, isUnavailable = false }: ProductCardProps) => {
   const { items } = useSelector((state: RootState) => state.watchlist);
   const isInwatch = items.some(
     (item: any) =>
@@ -48,6 +50,17 @@ const ProductCard = ({ product, showAddToCart = true , showdeleteProduct=true }:
     dispatch(toggleWatchlistRequest(productId));
   };
   const handleAddToCart = () => {
+  
+    if (isUnavailable) {
+      Swal.fire({
+        title: "Product Not Available",
+        text: "This product has been removed and is no longer available.",
+        icon: "warning",
+        confirmButtonText: "Ok",
+      });
+      return;
+    }
+
     if (!isLoggedIn()) return;
 
     const isAlreadyInCart = cartItems.some(
@@ -93,9 +106,12 @@ const ProductCard = ({ product, showAddToCart = true , showdeleteProduct=true }:
     });
   };
 
+  
+const isProductOwner = user && (user._id === product.userId || user.user?._id === product.userId);
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-950 relative group overflow-hidden hover:shadow-xl dark:hover:shadow-gray-900 transition-all duration-300 flex flex-col border border-transparent dark:border-gray-700">
-       {user && showdeleteProduct && (
+       {isProductOwner && showDeleteProduct && (
         <button
           onClick={handleDelete}
           className="absolute top-3 left-3 z-10 p-2 bg-white/80 dark:bg-gray-800/80 rounded-full shadow-sm hover:bg-red-50 text-gray-400 hover:text-red-600 transition-all"
@@ -138,9 +154,14 @@ const ProductCard = ({ product, showAddToCart = true , showdeleteProduct=true }:
         {showAddToCart && (
           <button
             onClick={handleAddToCart}
-            className="bg-blue-500 dark:bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer transition-colors shadow-sm"
+            disabled={isUnavailable}
+            className={`text-white px-4 py-2 rounded-md transition-all shadow-sm font-medium ${
+              isUnavailable
+                ? "bg-gray-400 dark:bg-gray-500 cursor-not-allowed opacity-60"
+                : "bg-blue-500 dark:bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 cursor-pointer"
+            }`}
           >
-            Add to Cart
+            {isUnavailable ? "Not Available" : "Add to Cart"}
           </button>
         )}
       </div>

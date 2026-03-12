@@ -1,9 +1,7 @@
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
 
-const calculateTotal = (items) => {
-  return items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-};
+
 
 const getCartByUserId = async (userId) => {
   const cart = await Cart.findOne({ userId });
@@ -56,6 +54,9 @@ const addItemToCart = async (userId, productId, quantity) => {
     totalPrice: calculateTotal(savedCart.items),
   };
 };
+const calculateTotal = (items) => {
+  return items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+};
 
 const updateItemQuantity = async (userId, productId, quantity) => {
   const cart = await Cart.findOne({ userId });
@@ -95,5 +96,4 @@ module.exports = {
   addItemToCart,
   updateItemQuantity,
   removeItemFromCart,
-  calculateTotal,
 };

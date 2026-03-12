@@ -25,10 +25,12 @@ const cartSlice = createSlice({
   reducers: {
     fetchCartRequest: (state) => {
       state.loading = true;
+      state.error = null;
     },
 
     fetchCartSuccess: (state, action: PayloadAction<any>) => {
       state.loading = false;
+      state.error = null;
       const responseData = action.payload.data || action.payload;
       state.totalPrice = action.payload.totalPrice;
       const newItems =
@@ -45,15 +47,18 @@ const cartSlice = createSlice({
 
     addToCartRequest: (state, action: PayloadAction<Product>) => {
       state.loading = true;
+      state.error = null;
     },
 
     addToCartSuccess: (state, action: PayloadAction<any>) => {
       state.loading = false;
+      state.error = null;
       const data = action.payload.data || action.payload;
       state.totalPrice = action.payload.totalPrice;
       state.items = data.items || (Array.isArray(data) ? data : state.items);
       localStorage.setItem("cart", JSON.stringify(state.items));
     },
+
     addToCartFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
       state.error = action.payload;
@@ -61,9 +66,11 @@ const cartSlice = createSlice({
 
     removeFromCartRequest: (state, action: PayloadAction<string>) => {
       state.loading = true;
+      state.error = null;
     },
 
     removeFromCartSuccess: (state, action: PayloadAction<any>) => {
+      state.error = null;
       state.loading = false;
       const data = action.payload.data || action.payload;
       state.items =
@@ -82,28 +89,12 @@ const cartSlice = createSlice({
       action: PayloadAction<{ id: string; quantity: number }>,
     ) => {
       state.loading = true;
-    },
-
-    updateCartQuantitySuccess: (state, action: PayloadAction<any>) => {
-      state.loading = false;
-      const data = action.payload.data || action.payload;
-
-      if (data && Array.isArray(action.payload.data.items)) {
-        state.items = data.items;
-        state.totalPrice = data.totalPrice;
-        localStorage.setItem("cart", JSON.stringify(state.items));
-      } else {
-        console.error("Payload data is missing items array:", action.payload);
-      }
+      state.error = null;
     },
 
     updateCartQuantityFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
-      const newItems = (state.error = action.payload);
-      if (Array.isArray(newItems)) {
-        state.items = newItems;
-        localStorage.setItem("cart", JSON.stringify(state.items));
-      }
+      state.error = action.payload;
     },
 
     clearCart: (state) => {
@@ -126,7 +117,6 @@ export const {
   removeFromCartSuccess,
   removeFromCartFailure,
   updateCartQuantityRequest,
-  updateCartQuantitySuccess,
   updateCartQuantityFailure,
   clearCart,
 } = cartSlice.actions;

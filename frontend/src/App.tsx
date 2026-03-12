@@ -10,7 +10,8 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCartRequest } from "./redux/Slices/cartSlice";
 import { fetchWatchlistRequest } from "./redux/Slices/watchlistSlice";
-// import { WelcomeSlide } from "./pages/welcome/Welcome";
+import {fetchProductRequest} from './redux/Slices/productSlice'
+
 
 const App = () => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ const App = () => {
     if (user) {
       dispatch(fetchCartRequest());
       dispatch(fetchWatchlistRequest());
+      dispatch(fetchProductRequest())
     }
   }, [dispatch, user]);
 
@@ -31,7 +33,6 @@ const App = () => {
           <Route path="/watchlist" element={<WatchList />} />
           <Route path="/cartview" element={<Cart />} />
           <Route path="/addproduct" element={<ProductForm />} />
-          {/* <Route path="/welcome" element={<WelcomeSlide/>} /> */}
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

@@ -13,9 +13,11 @@ const productSlice = createSlice({
   reducers: {
     fetchProductRequest: (state) => {
       state.loading = true;
+      state.error = null;
     },
     fetchProductSuccess: (state, action: PayloadAction<Product[]>) => {
       state.loading = false;
+      state.error = null;
       state.products = action.payload;
     },
     fetchProductFailure: (state, action: PayloadAction<string>) => {
@@ -25,10 +27,7 @@ const productSlice = createSlice({
 
     addProductRequest: (state, action: PayloadAction<any>) => {
       state.loading = true;
-    },
-    addProductSuccess: (state, action: PayloadAction<Product>) => {
-      state.loading = false;
-      state.products.push(action.payload);
+      state.error = null;
     },
     addProductFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
@@ -36,9 +35,11 @@ const productSlice = createSlice({
     },
     deleteProductRequest: (state, action: PayloadAction<string>) => {
       state.loading = true;
+      state.error = null;
     },
     deleteProductSuccess: (state, action: PayloadAction<string>) => {
       state.loading = false;
+      state.error = null;
       state.products = state.products.filter(p => (p._id || p.id) !== action.payload);
     },
     deleteProductFailure: (state, action: PayloadAction<string>) => {
@@ -53,7 +54,6 @@ export const {
   fetchProductSuccess,
   fetchProductFailure,
   addProductRequest,
-  addProductSuccess,
   addProductFailure,
   deleteProductRequest,
   deleteProductSuccess,

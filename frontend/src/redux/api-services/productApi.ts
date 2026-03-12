@@ -1,22 +1,22 @@
-import axios from "axios";
+import { apiClient } from "./axiosInstance";
 import { API_URL } from "../constants/api";
 
-const api = axios.create({ baseURL: "http://localhost:5000/api" });
-
 export const addProductApi = async (productData: any) => {
-  const res = await api.post(API_URL.PRODUCTS, productData);
+  const res = await apiClient.post(API_URL.PRODUCTS, productData);
+  return res.data;
+};
+
+export const fetchMyProductsApi = async () => {
+  const res = await apiClient.get(`${API_URL.PRODUCTS}/my-products`);
   return res.data;
 };
 
 export const fetchProductsApi = async () => {
-  const res = await api.get(API_URL.PRODUCTS);
+  const res = await apiClient.get(API_URL.PRODUCTS);
   return res.data;
 };
 
 export const deleteProductApi = async (id: string) => {
-  const token = localStorage.getItem("token"); 
-  const res = await api.delete(`${API_URL.PRODUCTS}/${id}`,{
-      headers: { Authorization: `Bearer ${token}` }
-  });
+  const res = await apiClient.delete(`${API_URL.PRODUCTS}/${id}`);
   return res.data;
 };

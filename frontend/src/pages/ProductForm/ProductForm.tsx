@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Package,
   DollarSign,
@@ -7,8 +7,10 @@ import {
   FileText,
   PlusCircle,
 } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addProductRequest } from "../../redux/Slices/productSlice";
+import type { RootState } from "../../redux/store/store";
+import Swal from "sweetalert2";
 
 export const ProductForm = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +23,25 @@ export const ProductForm = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
+  const { loading, error } = useSelector((state: RootState) => state.products);
+
+  // ✅ HANDLE SUCCESS/ERROR FROM REDUX
+  useEffect(() => {
+    if (isSubmitting && !loading) {
+      if (!error) {
+        // ✅ SUCCESS - Clear form
+        setFormData({
+          title: "",
+          price: "",
+          description: "",
+          category: "",
+          image: "",
+        });
+      }
+      // Reset submitting state
+      setIsSubmitting(false);
+    }
+  }, [loading, error, isSubmitting]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -33,21 +54,27 @@ export const ProductForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(addProductRequest(formData));
-    setIsSubmitting(true);
-
-    setTimeout(() => {
-      console.log("Product Added:", formData);
-      alert("Product added successfully! 🎉");
-      setIsSubmitting(false);
-      setFormData({
-        title: "",
-        price: "",
-        description: "",
-        category: "",
-        image: "",
+    
+    
+    if (!formData.title || !formData.price || !formData.description || !formData.category || !formData.image) {
+      Swal.fire({
+        title: "Missing Fields!",
+        text: "Please fill in all fields.",
+        icon: "warning",
+        confirmButtonText: "OK",
       });
-    }, 1500);
+      return;
+    }
+    
+ 
+    const productData = {
+      ...formData,
+      price: parseFloat(formData.price),  
+    };
+    
+    console.log("📝 Sending product:", productData);
+    setIsSubmitting(true);
+    dispatch(addProductRequest(productData));
   };
 
   const handleCancel = () => {
@@ -58,7 +85,6 @@ export const ProductForm = () => {
       category: "",
       image: "",
     });
-    
   };
 
   

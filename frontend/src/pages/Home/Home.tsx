@@ -5,6 +5,7 @@ import type { RootState } from "../../redux/store/store";
 import ProductsCard from "../../components/ProductCard/ProductsCard";
 import { useLocation, useNavigate } from "react-router-dom";
 export const Home = () => {
+  
   const dispatch = useDispatch();
   const { products, loading } = useSelector(
     (state: RootState) => state.products,

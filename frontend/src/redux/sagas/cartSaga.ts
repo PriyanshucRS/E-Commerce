@@ -10,7 +10,6 @@ import {
   removeFromCartRequest,
   removeFromCartSuccess,
   removeFromCartFailure,
-  updateCartQuantitySuccess,
   updateCartQuantityFailure,
   updateCartQuantityRequest,
 } from "../Slices/cartSlice";
@@ -41,7 +40,7 @@ function* handleFetchCart() {
   }
 }
 
-function* handledeleteCart(action: any) {
+function* handleDeleteCart(action: any) {
   try {
     const res = yield call(deleteCartApi, action.payload);
     yield put(removeFromCartSuccess(res));
@@ -52,12 +51,14 @@ function* handledeleteCart(action: any) {
 
 function* handleUpdateQuantity(action: any) {
   try {
-    const response = yield call(
+    yield call(
       updateCartQuantityApi,
       action.payload.id,
       action.payload.quantity,
     );
-    yield put(updateCartQuantitySuccess(response));
+    
+    const cartData = yield call(fetchCartApi);
+    yield put(fetchCartSuccess(cartData.data || cartData));
   } catch (error: any) {
     yield put(updateCartQuantityFailure(error.message));
   }
@@ -66,6 +67,6 @@ function* handleUpdateQuantity(action: any) {
 export function* watchCartSaga() {
   yield takeLatest(addToCartRequest.type, handleAddToCart);
   yield takeLatest(fetchCartRequest.type, handleFetchCart);
-  yield takeLatest(removeFromCartRequest.type, handledeleteCart);
+  yield takeLatest(removeFromCartRequest.type, handleDeleteCart);
   yield takeLatest(updateCartQuantityRequest.type, handleUpdateQuantity);
 }

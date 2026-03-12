@@ -1,19 +1,12 @@
-import axios from "axios";
-const api = axios.create({ baseURL: "http://localhost:5000/api" });
+import { apiClient } from "./axiosInstance";
 import { API_URL } from "../constants/api";
 
-api.interceptors.request.use((config) => {
-  const user = JSON.parse(localStorage.getItem("user") || "null");
-  if (user?.token) config.headers.Authorization = `Bearer ${user.token}`;
-  return config;
-});
-
 export const toggleWatchlistApi = async (productId: string) => {
-  const res = await api.post(API_URL.WATCHLIST, { productId });
+  const res = await apiClient.post(API_URL.WATCHLIST, { productId });
   return res.data;
 };
 
 export const fetchWatchlistApi = async () => {
-  const res = await api.get("/watchlist");
+  const res = await apiClient.get("/watchlist");
   return res.data;
 };

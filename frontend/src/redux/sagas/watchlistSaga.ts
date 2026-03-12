@@ -5,6 +5,8 @@ import {
 } from "../api-services/wishlistApi";
 import {
   toggleWatchlistRequest,
+  toggleWatchlistSuccess,
+  toggleWatchlistFailure,
   fetchWatchlistRequest,
   fetchWatchlistSuccess,
   fetchWatchlistFailure,
@@ -22,9 +24,9 @@ function* handleFetchWatchlist() {
 function* handleToggleWatchlist(action: any) {
   try {
     const updatedWatchlist = yield call(toggleWatchlistApi, action.payload);
-    yield put(fetchWatchlistSuccess(updatedWatchlist));
+    yield put(toggleWatchlistSuccess(updatedWatchlist));
   } catch (error: any) {
-    yield put(fetchWatchlistFailure(error.message));
+    yield put(toggleWatchlistFailure(error.message));
   }
 }
 

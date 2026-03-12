@@ -6,6 +6,13 @@ export const WatchList = () => {
   const { items } = useSelector((state: RootState) => ({
     items: state.watchlist.items,
   }));
+  const { products } = useSelector((state: RootState) => state.products);
+
+  const isProductAvailable = (itemId: string) => {
+    return products.some(
+      (product: any) => (product._id || product.id) === itemId,
+    );
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -19,18 +26,26 @@ export const WatchList = () => {
         </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {items.map((item) => (
-            <div key={item.productId || item._id} className="flex flex-col">
-              <ProductCard
-                product={{
-                  ...item,
-                  _id: item.productId,
-                  
-                }}
-                showdeleteProduct = {false}
-              />
-            </div>
-          ))}
+          {items.map((item) => {
+            const itemId = item.productId || item._id;
+            const isAvailable = isProductAvailable(itemId);
+
+            return (
+              <div
+                key={itemId}
+                className={`flex flex-col relative ${isAvailable ? "" : "opacity-60"}`}
+              >
+                <ProductCard
+                  product={{
+                    ...item,
+                    _id: item.productId,
+                  }}
+                  showDeleteProduct={false}
+                  isUnavailable={!isAvailable}
+                />
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
