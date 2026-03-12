@@ -101,7 +101,7 @@ const ProductCard = ({ product, showAddToCart = true , showDeleteProduct=true, i
       confirmButtonText: "Yes, delete it!"
     }).then((result) => {
       if (result.isConfirmed) {
-        dispatch(deleteProductRequest(product._id || product.id));
+        dispatch(deleteProductRequest(String(product._id || product.id)));
       }
     });
   };
