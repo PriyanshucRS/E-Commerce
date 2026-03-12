@@ -34,6 +34,12 @@ const toggleWishlist = async (userId, productId) => {
 
   if (itemIndex > -1) {
     watchlist.items.splice(itemIndex, 1);
+    
+    
+    if (watchlist.items.length === 0) {
+      await WatchList.findByIdAndDelete(watchlist._id);
+      return { items: [] };
+    }
   } else {
     const product = await Product.findById(productId);
     if (!product) throw new Error("Product not found");

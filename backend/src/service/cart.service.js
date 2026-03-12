@@ -84,6 +84,16 @@ const removeItemFromCart = async (userId, productId) => {
   cart.items = cart.items.filter(
     (item) => item.productId.toString() !== productId,
   );
+  
+  
+  if (cart.items.length === 0) {
+    await Cart.findByIdAndDelete(cart._id);
+    return {
+      items: [],
+      totalPrice: 0,
+    };
+  }
+  
   const savedCart = await cart.save();
   return {
     items: savedCart.items,
