@@ -16,11 +16,9 @@ const watchlistRoutes = require("./src/routes/watchlistRouter");
 const app = express();
 
 const corsOptions = {
-  origin: [
-    "*",
-   
-  ],
-}
+  origin: '*', 
+  optionsSuccessStatus: 200
+};
 
 app.use(cors(corsOptions));
 
