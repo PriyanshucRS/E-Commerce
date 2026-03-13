@@ -20,6 +20,7 @@ const corsOptions = {
     'http://localhost:5173',
     'https://e-commerce-frontend-c6h2.onrender.com'
   ], 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
   optionsSuccessStatus: 200
 };
