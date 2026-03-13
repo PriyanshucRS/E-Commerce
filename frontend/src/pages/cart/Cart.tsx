@@ -6,7 +6,7 @@ import {
   updateCartQuantityRequest,
 } from "../../redux/Slices/cartSlice";
 import { Trash2, ShoppingBag } from "lucide-react";
-import Swal from "sweetalert2";
+import { confirmAction } from "../../utils/alerts";
 
 export const Cart = () => {
   const { items } = useSelector((state: RootState) => state.cart);
@@ -46,11 +46,10 @@ export const Cart = () => {
   };
 
   const handleRemove = (id: string) => {
-    Swal.fire({
+    confirmAction({
       title: "Remove this item?",
       text: "Are you sure you want to remove this from your cart?",
       icon: "warning",
-      showCancelButton: true,
       confirmButtonColor: "#ef4444",
       cancelButtonColor: "#6b7280",
       confirmButtonText: "Yes, remove it!",

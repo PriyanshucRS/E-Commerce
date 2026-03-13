@@ -10,7 +10,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { addProductRequest } from "../../redux/Slices/productSlice";
 import type { RootState } from "../../redux/store/store";
-import Swal from "sweetalert2";
+import { alertWarning } from "../../utils/alerts";
 
 export const ProductForm = () => {
   const [formData, setFormData] = useState({
@@ -57,12 +57,7 @@ export const ProductForm = () => {
     
     
     if (!formData.title || !formData.price || !formData.description || !formData.category || !formData.image) {
-      Swal.fire({
-        title: "Missing Fields!",
-        text: "Please fill in all fields.",
-        icon: "warning",
-        confirmButtonText: "OK",
-      });
+      alertWarning("Missing Fields!", "Please fill in all fields.");
       return;
     }
     

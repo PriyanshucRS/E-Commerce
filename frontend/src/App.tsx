@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect, type ReactNode } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "./redux/store/store";
 import { Login } from "./pages/Login/Login";
@@ -9,19 +9,10 @@ import { MainLayout } from "./layouts/MainLayout";
 import { Home } from "./pages/Home/Home";
 import { Cart } from "./pages/cart/Cart";
 import { ProductForm } from "./pages/ProductForm/ProductForm";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import { fetchCartRequest } from "./redux/Slices/cartSlice";
 import { fetchWatchlistRequest } from "./redux/Slices/watchlistSlice";
 import { fetchProductRequest } from "./redux/Slices/productSlice";
-
-type ProtectedRouteProps = {
-  children: ReactNode;
-};
-
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user } = useSelector((state: RootState) => state.auth);
-  if (!user) return <Navigate to="/login" replace />;
-  return <>{children}</>;
-};
 
 const App = () => {
   const dispatch = useDispatch();
@@ -67,6 +58,7 @@ const App = () => {
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="*" element={<p>Not Found</p>} />
       </Routes>
     </Router>
   );

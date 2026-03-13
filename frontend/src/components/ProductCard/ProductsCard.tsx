@@ -5,9 +5,8 @@ import { toggleWatchlistRequest } from "../../redux/Slices/watchlistSlice";
 import { addToCartRequest } from "../../redux/Slices/cartSlice";
 import type { RootState } from "../../redux/store/store";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import { confirmAction, toastSuccess } from "../../utils/alerts";
 import { deleteProductRequest } from "../../redux/Slices/productSlice";
-
 
 interface ProductCardProps {
   product: Product & { userId?: string };
@@ -16,7 +15,12 @@ interface ProductCardProps {
   isUnavailable?: boolean;
 }
 
-const ProductCard = ({ product, showAddToCart = true , showDeleteProduct=true, isUnavailable = false }: ProductCardProps) => {
+const ProductCard = ({
+  product,
+  showAddToCart = true,
+  showDeleteProduct = true,
+  isUnavailable = false,
+}: ProductCardProps) => {
   const { items } = useSelector((state: RootState) => state.watchlist);
   const isInwatch = items.some(
     (item: any) =>
@@ -31,12 +35,10 @@ const ProductCard = ({ product, showAddToCart = true , showDeleteProduct=true, i
   const isLoggedIn = () => {
     if (user) return true;
 
-    Swal.fire({
+    confirmAction({
       title: "Login Required!",
       text: "Please login to continue.",
       icon: "info",
-      showCancelButton: true,
-      reverseButtons: true,
       confirmButtonText: "Login",
     }).then((res) => {
       if (res.isConfirmed) navigate("/login");
@@ -49,9 +51,8 @@ const ProductCard = ({ product, showAddToCart = true , showDeleteProduct=true, i
     if (!isLoggedIn()) return;
     dispatch(toggleWatchlistRequest(productId));
   };
-  const handleAddToCart = () => {
-  
 
+  const handleAddToCart = () => {
     if (!isLoggedIn()) return;
 
     const isAlreadyInCart = cartItems.some(
@@ -61,35 +62,27 @@ const ProductCard = ({ product, showAddToCart = true , showDeleteProduct=true, i
     );
 
     if (isAlreadyInCart) {
-      Swal.fire({
-        title: "Quantity Increased",
-        text: `${product.title} quantity has been increased in your cart.`,
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+      toastSuccess(
+        "Quantity Increased",
+        `${product.title} quantity has been increased in your cart.`,
+      );
     } else {
-      Swal.fire({
-        title: "Added to Cart",
-        text: `${product.title} has been added to your cart.`,
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+      toastSuccess(
+        "Added to Cart",
+        `${product.title} has been added to your cart.`,
+      );
     }
 
     dispatch(addToCartRequest(product));
   };
 
   const handleDelete = () => {
-    Swal.fire({
+    confirmAction({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
       icon: "warning",
-      showCancelButton: true,
-      reverseButtons: true,
       confirmButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
+      confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
         dispatch(deleteProductRequest(String(product._id || product.id)));
@@ -97,12 +90,12 @@ const ProductCard = ({ product, showAddToCart = true , showDeleteProduct=true, i
     });
   };
 
-  
-const isProductOwner = user && (user._id === product.userId || user.user?._id === product.userId);
+  const isProductOwner =
+    user && (user._id === product.userId || user.user?._id === product.userId);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-950 relative group overflow-hidden hover:shadow-xl dark:hover:shadow-gray-900 transition-all duration-300 flex flex-col border border-transparent dark:border-gray-700">
-       {isProductOwner && showDeleteProduct && (
+      {isProductOwner && showDeleteProduct && (
         <button
           onClick={handleDelete}
           className="absolute top-3 left-3 z-10 p-2 bg-white/80 dark:bg-gray-800/80 rounded-full shadow-sm hover:bg-red-50 text-gray-400 hover:text-red-600 transition-all"
@@ -118,7 +111,11 @@ const isProductOwner = user && (user._id === product.userId || user.user?._id ==
       >
         <Heart
           size={20}
-          className={isInwatch ? "text-red-500 fill-red-500" : "text-gray-400 dark:text-gray-500"}
+          className={
+            isInwatch
+              ? "text-red-500 fill-red-500"
+              : "text-gray-400 dark:text-gray-500"
+          }
         />
       </button>
       <div className="h-48 flex items-center justify-center p-4 bg-white dark:bg-white/5">
@@ -140,7 +137,9 @@ const isProductOwner = user && (user._id === product.userId || user.user?._id ==
         </p>
       </div>
       <div className="p-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
-        <span className="text-lg font-bold text-gray-900 dark:text-gray-100">${product.price}</span>
+        <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+          ${product.price}
+        </span>
 
         {showAddToCart && (
           <button
