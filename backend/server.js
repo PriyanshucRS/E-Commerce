@@ -17,17 +17,14 @@ const app = express();
 
 
 const corsOptions = {
-  origin: [
-    'http://localhost:5173',
-    'https://e-commerce-frontend-c6h2.onrender.com'
-  ], 
+  origin: 'https://e-commerce-frontend-c6h2.onrender.com', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization']
-};
+}
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); 
+app.options('/*any', cors(corsOptions));
 
 
 app.use(express.json());
