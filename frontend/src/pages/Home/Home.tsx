@@ -31,7 +31,7 @@ export const Home = () => {
   dispatch(fetchProductRequest());
 }, [dispatch]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading && products.length === 0) return <div>Loading...</div>;
 
   return (
     <div className="container mx-auto px-4 py-8">
