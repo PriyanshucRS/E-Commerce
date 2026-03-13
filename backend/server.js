@@ -8,24 +8,26 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 
-
 const authRoutes = require("./src/routes/authRoutes");
 const productRoutes = require("./src/routes/productRoutes");
 const cartRoutes = require("./src/routes/cartRoutes");
 const watchlistRoutes = require("./src/routes/watchlistRouter");
+
 const app = express();
 
+
 const corsOptions = {
-  origin:[
+  origin: [
     'http://localhost:5173',
     'https://e-commerce-frontend-c6h2.onrender.com'
   ], 
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
-  optionsSuccessStatus: 200
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 app.use(cors(corsOptions));
+
 
 app.use(express.json());
 
@@ -35,12 +37,16 @@ app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/watchlist", watchlistRoutes);
 
+
 mongoose
   .connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log("MongoDB Connection Error:", err));
+  .then(() => console.log("MongoDB Connected Successfully"))
+  .catch((err) => {
+    console.error("MongoDB Connection Error:", err.message);
+    process.exit(1); 
+  });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`server running on port ${PORT}`);
+  console.log(` Server running on port ${PORT}`);
 });
