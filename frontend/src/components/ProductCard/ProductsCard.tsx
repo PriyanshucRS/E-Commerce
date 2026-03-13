@@ -51,15 +51,6 @@ const ProductCard = ({ product, showAddToCart = true , showDeleteProduct=true, i
   };
   const handleAddToCart = () => {
   
-    if (isUnavailable) {
-      Swal.fire({
-        title: "Product Not Available",
-        text: "This product has been removed and is no longer available.",
-        icon: "warning",
-        confirmButtonText: "Ok",
-      });
-      return;
-    }
 
     if (!isLoggedIn()) return;
 

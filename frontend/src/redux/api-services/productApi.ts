@@ -6,10 +6,10 @@ export const addProductApi = async (productData: any) => {
   return res.data;
 };
 
-export const fetchMyProductsApi = async () => {
-  const res = await apiClient.get(`${API_URL.PRODUCTS}/my-products`);
-  return res.data;
-};
+// export const fetchMyProductsApi = async () => {
+//   const res = await apiClient.get(`${API_URL.PRODUCTS}/my-products`);
+//   return res.data;
+// };
 
 export const fetchProductsApi = async () => {
   const res = await apiClient.get(API_URL.PRODUCTS);

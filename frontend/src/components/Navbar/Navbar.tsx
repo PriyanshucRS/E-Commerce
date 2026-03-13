@@ -31,14 +31,14 @@ export const Navbar = () => {
   return (
     <header className="fixed top-0 left-0 w-full z-50">
       <nav className="flex items-center justify-between px-6 md:px-10 py-4 bg-gray-100 dark:bg-gray-900 shadow-md transition-colors duration-300">
-        <div className="flex text-xl md:text-2xl font-bold text-blue-600 gap-4">
-          <img
-            src={logo}
-            alt="logo"
-            className="h-14 w-auto transition-transform group-hover:scale-110"
-          />
-          <Link to="/" className="mt-3.5 dark:text-blue-400">
-            E-Commerce Website
+        <div className="flex text-xl md:text-2xl font-bold text-blue-600">
+          <Link to="/" className="flex items-center gap-4">
+            <img
+              src={logo}
+              alt="logo"
+              className="h-14 w-auto transition-transform group-hover:scale-110"
+            />
+            <span className="dark:text-blue-400">E-Commerce Website</span>
           </Link>
         </div>
 
@@ -47,8 +47,11 @@ export const Navbar = () => {
           <NavLink
             to="/"
             className={({ isActive }) =>
-              `font-medium transition-all duration-200 pb-1 
-             ${isActive ? "text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400" : "text-gray-600 hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-400"}`
+              `flex items-center gap-2 transition-colors ${
+                isActive
+                  ? "text-blue-600 font-semibold border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400"
+                  : "text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"
+              }`
             }
           >
             Home
@@ -58,10 +61,10 @@ export const Navbar = () => {
             <NavLink
               to="/addproduct"
               className={({ isActive }) =>
-                `text-gray-700 hover:text-blue-600 transition-colors dark:text-gray-300 dark:hover:text-blue-400 ${
+                `flex items-center gap-2 transition-colors ${
                   isActive
                     ? "text-blue-600 font-semibold border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400"
-                    : ""
+                    : "text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"
                 }`
               }
             >
@@ -71,13 +74,18 @@ export const Navbar = () => {
 
           <NavLink
             to="/watchlist"
-            className="flex items-center gap-1 p-2 group"
+            className={({ isActive }) =>
+              `flex items-center gap-2 transition-colors ${
+                isActive
+                  ? "text-blue-600 font-semibold border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400"
+                  : "text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"
+              }`
+            }
           >
-            <h2 className="text-gray-600 group-hover:text-blue-500 transition-colors dark:text-gray-300 dark:group-hover:text-blue-400">
-              WatchList
-            </h2>
+            <span className="transition-colors">WatchList</span>
+
             {watchCount > 0 && (
-              <span className="bg-gray-200 dark:bg-gray-700 dark:text-gray-200 text-gray-700 text-[12px] font-bold px-2 py-0.5 rounded-full min-w-5 text-center">
+              <span className="bg-gray-200 dark:bg-gray-700 dark:text-gray-200 text-gray-700 text-[12px] font-bold px-2 py-0.5 rounded-full min-w-[20px] h-5 flex items-center justify-center">
                 {watchCount}
               </span>
             )}
@@ -86,7 +94,13 @@ export const Navbar = () => {
           {/* Desktop Cart View */}
           <NavLink
             to="/cartview"
-            className="relative group p-2 flex flex-col items-center"
+            className={({ isActive }) =>
+              `relative group p-2 flex flex-col items-center transition-colors ${
+                isActive
+                  ? "text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400"
+                  : "text-gray-500"
+              }`
+            }
           >
             <div className="relative">
               <img
@@ -94,11 +108,15 @@ export const Navbar = () => {
                 alt="cartLogo"
                 className="h-10 w-auto transition-transform group-hover:scale-110 dark:invert"
               />
-              <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                {cartCount}
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                  {cartCount}
+                </span>
+              )}
             </div>
-            <span className="text-[11px] font-medium text-gray-500 group-hover:text-blue-500 transition-colors -mt-1 dark:text-gray-400 dark:group-hover:text-blue-400">
+            <span
+              className={`text-[11px] font-medium transition-colors -mt-1 group-hover:text-blue-500 ${"text-inherit"}`}
+            >
               My Cart
             </span>
           </NavLink>
@@ -118,15 +136,12 @@ export const Navbar = () => {
 
           <div className="flex items-center">
             {user ? (
-              
-              
-                <button
-                  onClick={handleLogout}
-                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-all ml-2 shadow-sm"
-                >
-                  Logout
-                </button>
-            
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-all ml-2 shadow-sm"
+              >
+                Logout
+              </button>
             ) : (
               <NavLink to="/login">
                 <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all ml-2 shadow-sm">

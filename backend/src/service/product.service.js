@@ -9,11 +9,11 @@ const getProductsByUserId = async (userId) => {
   return await Product.find({ userId });
 };
 
-const getProductById = async (id) => {
-  const product = await Product.findById(id);
-  if (!product) throw new Error("Product not found");
-  return product;
-};
+// const getProductById = async (id) => {
+//   const product = await Product.findById(id);
+//   if (!product) throw new Error("Product not found");
+//   return product;
+// };
 
 const createProduct = async (productData, userId) => {
   const product = new Product({
@@ -40,7 +40,7 @@ const deleteProduct = async (id, userId) => {
 module.exports = {
   getAllProducts,
   getProductsByUserId,
-  getProductById,
+  // getProductById,
   createProduct,
   deleteProduct,
 };

@@ -1,4 +1,4 @@
-import { put, call, takeLatest, select } from "redux-saga/effects";
+import { put, call, takeLatest } from "redux-saga/effects";
 import {
   fetchProductRequest,
   fetchProductSuccess,
@@ -8,8 +8,7 @@ import {
   deleteProductRequest,
   deleteProductFailure,
 } from "../Slices/productSlice";
-import { addProductApi, fetchMyProductsApi, fetchProductsApi, deleteProductApi } from "../api-services/productApi";
-import type { RootState } from "../store/store";
+import { addProductApi, fetchProductsApi, deleteProductApi } from "../api-services/productApi";
 import Swal from "sweetalert2";
 
 function* addProductSaga(action: any) {
@@ -17,13 +16,8 @@ function* addProductSaga(action: any) {
     yield call(addProductApi, action.payload);
     
    
-    const state: RootState = yield select();
-    const user = state.auth.user;
-    
-    if (user) {
-      const updatedProducts = yield call(fetchMyProductsApi);
-      yield put(fetchProductSuccess(updatedProducts.data || updatedProducts));
-    }
+    const updatedProducts = yield call(fetchProductsApi);
+    yield put(fetchProductSuccess(updatedProducts.data || updatedProducts));
     
     Swal.fire({
       title: "Success!",
@@ -48,19 +42,8 @@ function* addProductSaga(action: any) {
 function* fetchProductSaga() {
   try {
     
-    const state: RootState = yield select();
-    const user = state.auth.user;
-
-    let fetchProdcuts;
-    if (user) {
-     
-      fetchProdcuts = yield call(fetchMyProductsApi);
-    } else {
-      
-      fetchProdcuts = yield call(fetchProductsApi);
-    }
-
-    yield put(fetchProductSuccess(fetchProdcuts.data || fetchProdcuts));
+    const fetchProducts = yield call(fetchProductsApi);
+    yield put(fetchProductSuccess(fetchProducts.data || fetchProducts));
   } catch (err: any) {
     yield put(fetchProductFailure(err.message));
   }
@@ -70,16 +53,8 @@ function* deleteProductSaga(action: any) {
   try {
     yield call(deleteProductApi, action.payload);
     
-    const state: RootState = yield select();
-    const user = state.auth.user;
-    
-    if (user) {
-      const updatedProducts = yield call(fetchMyProductsApi);
-      yield put(fetchProductSuccess(updatedProducts.data || updatedProducts));
-    } else {
-      const updatedProducts = yield call(fetchProductsApi);
-      yield put(fetchProductSuccess(updatedProducts.data || updatedProducts));
-    }
+    const updatedProducts = yield call(fetchProductsApi);
+    yield put(fetchProductSuccess(updatedProducts.data || updatedProducts));
   
     Swal.fire({
       title: "Deleted!",

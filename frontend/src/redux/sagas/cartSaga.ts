@@ -51,14 +51,12 @@ function* handleDeleteCart(action: any) {
 
 function* handleUpdateQuantity(action: any) {
   try {
-    yield call(
+    const updatedCart = yield call(
       updateCartQuantityApi,
       action.payload.id,
       action.payload.quantity,
     );
-    
-    const cartData = yield call(fetchCartApi);
-    yield put(fetchCartSuccess(cartData.data || cartData));
+    yield put(fetchCartSuccess(updatedCart.data || updatedCart));
   } catch (error: any) {
     yield put(updateCartQuantityFailure(error.message));
   }

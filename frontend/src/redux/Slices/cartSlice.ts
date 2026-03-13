@@ -12,6 +12,9 @@ interface CartState {
   error: string | null;
 }
 
+const calculateTotalPrice = (items: CartItem[]) =>
+  items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
 const initialState: CartState = {
   items: [],
   loading: false,
@@ -32,11 +35,13 @@ const cartSlice = createSlice({
       state.loading = false;
       state.error = null;
       const responseData = action.payload.data || action.payload;
-      state.totalPrice = action.payload.totalPrice;
+      state.totalPrice =
+        action.payload.totalPrice ?? calculateTotalPrice(state.items);
       const newItems =
         responseData.items || (Array.isArray(responseData) ? responseData : []);
 
       state.items = newItems;
+      state.totalPrice = calculateTotalPrice(state.items);
       localStorage.setItem("cart", JSON.stringify(state.items));
     },
 
@@ -54,8 +59,10 @@ const cartSlice = createSlice({
       state.loading = false;
       state.error = null;
       const data = action.payload.data || action.payload;
-      state.totalPrice = action.payload.totalPrice;
+      state.totalPrice =
+        action.payload.totalPrice ?? calculateTotalPrice(state.items);
       state.items = data.items || (Array.isArray(data) ? data : state.items);
+      state.totalPrice = calculateTotalPrice(state.items);
       localStorage.setItem("cart", JSON.stringify(state.items));
     },
 
@@ -73,10 +80,14 @@ const cartSlice = createSlice({
       state.error = null;
       state.loading = false;
       const data = action.payload.data || action.payload;
+      
       state.items =
         data.items ||
         data.cart?.items ||
         (Array.isArray(data) ? data : state.items);
+      state.totalPrice =
+        action.payload.totalPrice ?? calculateTotalPrice(state.items);
+       
       localStorage.setItem("cart", JSON.stringify(state.items));
     },
     removeFromCartFailure: (state, action: PayloadAction<string>) => {
@@ -90,6 +101,17 @@ const cartSlice = createSlice({
     ) => {
       state.loading = true;
       state.error = null;
+      const targetId = action.payload.id;
+      const nextItems = state.items.map((item) => {
+        const itemId = item.productId || item._id || item.id;
+        if (itemId === targetId) {
+          return { ...item, quantity: action.payload.quantity };
+        }
+        return item;
+      });
+      state.items = nextItems;
+      state.totalPrice = calculateTotalPrice(state.items);
+      localStorage.setItem("cart", JSON.stringify(state.items));
     },
 
     updateCartQuantityFailure: (state, action: PayloadAction<string>) => {

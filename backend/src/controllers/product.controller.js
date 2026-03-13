@@ -10,15 +10,15 @@ exports.getProducts = async (req, res) => {
 };
 
 
-exports.getMyProducts = async (req, res) => {
-  try {
-    console.log("🔍 Fetching products for user:", req.user.id);
-    const products = await productService.getProductsByUserId(req.user.id);
-    res.status(200).json(products);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+// exports.getMyProducts = async (req, res) => {
+//   try {
+//     console.log("🔍 Fetching products for user:", req.user.id);
+//     const products = await productService.getProductsByUserId(req.user.id);
+//     res.status(200).json(products);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 
 exports.addProduct = async (req, res) => {
   try {
