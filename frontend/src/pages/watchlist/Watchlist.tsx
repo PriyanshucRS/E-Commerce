@@ -1,10 +1,12 @@
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import ProductCard from "../../components/ProductCard/ProductsCard";
+import { Spinner } from "../../components/Spinner/Spinner";
 
 export const WatchList = () => {
-  const { items } = useSelector((state: RootState) => ({
+  const { items, loading } = useSelector((state: RootState) => ({
     items: state.watchlist.items,
+    loading: state.watchlist.loading,
   }));
   const { products } = useSelector((state: RootState) => state.products);
 
@@ -13,6 +15,10 @@ export const WatchList = () => {
       (product: any) => (product._id || product.id) === itemId,
     );
   };
+
+  if (loading && items.length === 0) {
+    return <Spinner />;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

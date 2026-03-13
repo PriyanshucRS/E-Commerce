@@ -76,7 +76,7 @@ export const Register = () => {
     <div className="h-screen overflow-y-auto flex items-center justify-center bg-gray-500 dark:bg-gray-950 px-4 transition-colors duration-300">
       <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
         <h1 className="text-red-500 font-bold text-center text-xl mb-6">
-          Registration Page
+          Registration
         </h1>
 
         <form className="space-y-4" onSubmit={handleSubmit}>

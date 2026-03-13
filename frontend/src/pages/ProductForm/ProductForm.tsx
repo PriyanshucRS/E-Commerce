@@ -8,6 +8,7 @@ import {
   PlusCircle,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { addProductRequest } from "../../redux/Slices/productSlice";
 import type { RootState } from "../../redux/store/store";
 import { alertWarning } from "../../utils/alerts";
@@ -23,6 +24,7 @@ export const ProductForm = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { loading, error } = useSelector((state: RootState) => state.products);
 
  
@@ -37,11 +39,12 @@ export const ProductForm = () => {
           category: "",
           image: "",
         });
+        navigate("/");
       }
      
       setIsSubmitting(false);
     }
-  }, [loading, error, isSubmitting]);
+  }, [loading, error, isSubmitting, navigate]);
 
   const handleChange = (
     e: React.ChangeEvent<

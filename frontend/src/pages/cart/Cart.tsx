@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import ProductCard from "../../components/ProductCard/ProductsCard";
+import { Spinner } from "../../components/Spinner/Spinner";
 import {
   removeFromCartRequest,
   updateCartQuantityRequest,
@@ -9,7 +10,7 @@ import { Trash2, ShoppingBag } from "lucide-react";
 import { confirmAction } from "../../utils/alerts";
 
 export const Cart = () => {
-  const { items } = useSelector((state: RootState) => state.cart);
+  const { items, loading } = useSelector((state: RootState) => state.cart);
   const { products } = useSelector((state: RootState) => state.products);
   const dispatch = useDispatch();
 
@@ -59,6 +60,10 @@ export const Cart = () => {
       }
     });
   };
+
+  if (loading && items.length === 0) {
+    return <Spinner />;
+  }
 
   return (
     <div className="container mx-auto px-4 py-10 ">

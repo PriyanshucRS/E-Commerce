@@ -46,7 +46,7 @@ export const Login = () => {
   return (
     <div className="h-screen overflow-y-auto flex items-center justify-center bg-gray-500 dark:bg-gray-950 px-4 transition-colors duration-300">
       <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-        <h1 className="text-red-500 font-bold text-center text-2xl mb-6">Login Page</h1>
+        <h1 className="text-red-500 font-bold text-center text-2xl mb-6">Login</h1>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
         
