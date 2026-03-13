@@ -23,7 +23,10 @@ function* handleFetchWatchlist() {
 
 function* handleToggleWatchlist(action: any) {
   try {
-    const updatedWatchlist = yield call(toggleWatchlistApi, action.payload);
+    const payload = action.payload;
+    const productId =
+      payload?.productId || payload?._id || payload?.id || payload;
+    const updatedWatchlist = yield call(toggleWatchlistApi, productId);
     yield put(toggleWatchlistSuccess(updatedWatchlist));
   } catch (error: any) {
     yield put(toggleWatchlistFailure(error.message));

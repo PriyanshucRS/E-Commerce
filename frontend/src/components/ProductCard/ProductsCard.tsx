@@ -21,7 +21,9 @@ const ProductCard = ({
   showDeleteProduct = true,
   isUnavailable = false,
 }: ProductCardProps) => {
-  const { items } = useSelector((state: RootState) => state.watchlist);
+  const { items, loading: watchlistLoading } = useSelector(
+    (state: RootState) => state.watchlist,
+  );
   const isInwatch = items.some(
     (item: any) =>
       (item.productId || item._id || item.id) ===
@@ -47,9 +49,9 @@ const ProductCard = ({
     return false;
   };
 
-  const handleWatchlist = (productId: string) => {
+  const handleWatchlist = () => {
     if (!isLoggedIn()) return;
-    dispatch(toggleWatchlistRequest(productId));
+    dispatch(toggleWatchlistRequest(product));
   };
 
   const handleAddToCart = () => {
@@ -104,9 +106,8 @@ const ProductCard = ({
         </button>
       )}
       <button
-        onClick={() =>
-          handleWatchlist(product.productId || product.id || product._id)
-        }
+        onClick={handleWatchlist}
+        disabled={watchlistLoading}
         className="absolute top-3 right-3 z-10 p-2 bg-white/80 dark:bg-gray-800/80 rounded-full shadow-sm hover:bg-white dark:hover:bg-gray-700 transition-all text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400"
       >
         <Heart
