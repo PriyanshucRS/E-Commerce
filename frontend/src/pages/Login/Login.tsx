@@ -36,7 +36,7 @@ export const Login = () => {
     if (user) {
       console.log("user", user);
       const fullName =
-        `${user.user.firstName} ${user.user.lastName }`.trim() ||
+        `${user?.user.firstName} ${user.user.lastName }`.trim() ||
         "User";
 
       toast.success(`Welcome ${fullName}!`);
