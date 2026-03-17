@@ -1,14 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { loginRequest } from "../../redux/Slices/authSlice";
+import { loginRequest, clearError } from "../../redux/Slices/authSlice";
 import { type RootState } from "../../redux/store/store";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { PasswordInput } from "../../components/PasswordInput/PasswordInput";
 
 import { type loginFormData, loginSchema } from "../auth.schema";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Login = () => {
@@ -23,21 +22,23 @@ export const Login = () => {
     formState: { errors },
   } = useForm<loginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-    shouldUnregister: false,
   });
 
   const onSubmit = (data: loginFormData) => {
     dispatch(loginRequest(data));
   };
 
+  const handleClearError = useCallback(() => {
+    if (error) dispatch(clearError());
+  }, [error, dispatch]);
+
   useEffect(() => {
     if (user) {
+      console.log("user", user);
       const fullName =
-        `${user.firstName || ""} ${user.lastName || ""}`.trim() || "User";
+        `${user.user.firstName} ${user.user.lastName }`.trim() ||
+        "User";
+
       toast.success(`Welcome ${fullName}!`);
       reset();
       navigate("/");
@@ -51,7 +52,11 @@ export const Login = () => {
           Login
         </h1>
 
-        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className="space-y-6"
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+        >
           <div>
             <div className="mb-4">
               <label
@@ -65,6 +70,7 @@ export const Login = () => {
                 type="email"
                 placeholder="example@email.com"
                 {...register("email")}
+                onFocus={handleClearError}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
                 required
               />
@@ -80,6 +86,7 @@ export const Login = () => {
                 label="Password"
                 placeholder="Enter your password"
                 {...register("password")}
+                onFocus={handleClearError}
               />
               {errors.password && (
                 <p className="text-red-500 text-xs mt-1">
@@ -108,10 +115,9 @@ export const Login = () => {
           >
             Register
           </Link>
-          <br />
           <Link
             to="/"
-            className="text-blue-600 dark:text-blue-400 font-bold hover:underline"
+            className="block mt-2 text-blue-600 dark:text-blue-400 font-bold hover:underline"
           >
             Home
           </Link>

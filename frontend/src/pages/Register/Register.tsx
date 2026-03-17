@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { type RootState } from "../../redux/store/store";
 import { Link, useNavigate } from "react-router-dom";
 import { registerRequest, clearError } from "../../redux/Slices/authSlice";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { PasswordInput } from "../../components/PasswordInput/PasswordInput";
 
 import { useForm } from "react-hook-form";
@@ -20,20 +20,12 @@ export const Register = () => {
     reset,
     formState: { errors },
   } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-    shouldUnregister: false,
-  });
+    resolver: zodResolver(registerSchema)});
 
   const onSubmit = (data: RegisterFormData) => {
-    const { confirmPassword, ...submitData } = data;
+    console.log("=>>", data);
 
+    const { confirmPassword: _unused, ...submitData } = data;
     dispatch(registerRequest(submitData));
   };
 
@@ -44,6 +36,10 @@ export const Register = () => {
       navigate("/login");
     }
   }, [isRegistered, navigate, reset]);
+
+  const handleClearError = useCallback(() => {
+    if (error) dispatch(clearError());
+  }, [error, dispatch]);
 
   return (
     <div className="h-screen overflow-y-auto flex items-center justify-center bg-gray-500 dark:bg-gray-950 px-4 transition-colors duration-300">
@@ -66,8 +62,9 @@ export const Register = () => {
                 type="text"
                 placeholder="Enter your first name"
                 {...register("firstName")}
+                onFocus={handleClearError}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-                required
+                // required
               />
               {errors.firstName && (
                 <p className="text-red-500 text-xs mt-1">
@@ -87,8 +84,9 @@ export const Register = () => {
                 type="text"
                 placeholder="Enter your last name"
                 {...register("lastName")}
+                onFocus={handleClearError}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-                required
+                // required
               />
               {errors.lastName && (
                 <p className="text-red-500 text-xs mt-1">
@@ -123,7 +121,7 @@ export const Register = () => {
                 id="password"
                 label="Password"
                 placeholder="Enter your password"
-                onFocus={() => error && dispatch(clearError())}
+                onFocus={handleClearError}
                 {...register("password")}
               />
               {errors.password && (
@@ -138,6 +136,7 @@ export const Register = () => {
                 label="Confirm Password"
                 placeholder="Enter your password"
                 {...register("confirmPassword")}
+                onFocus={handleClearError}
               />
               {errors.confirmPassword && (
                 <p className="text-red-500 text-xs mt-1">
@@ -157,22 +156,24 @@ export const Register = () => {
             </div>
           )}
         </form>
-        <p className="text-center text-gray-600 dark:text-gray-400 mt-4">
-          Already have an account?{" "}
-          <Link
-            to="/login"
-            className="text-blue-600 dark:text-blue-400 font-bold hover:underline"
-          >
-            Login
-          </Link>
-          <br />
+        <div className="text-center mt-4 space-y-2">
+          <p className="text-gray-600 dark:text-gray-400">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="text-blue-600 dark:text-blue-400 font-bold hover:underline"
+            >
+              Login
+            </Link>
+          </p>
+
           <Link
             to="/"
-            className="text-blue-600 dark:text-blue-400 font-bold hover:underline text-sm"
+            className="block mr-2 text-blue-600 dark:text-blue-400 font-bold hover:underline text-sm"
           >
             Home
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );

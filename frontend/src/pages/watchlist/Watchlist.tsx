@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import ProductCard from "../../components/ProductCard/ProductsCard";
 import { Spinner } from "../../components/Spinner/Spinner";
+import { useCallback } from "react";
 
 export const WatchList = () => {
   const { items, loading } = useSelector((state: RootState) => ({
@@ -10,11 +11,13 @@ export const WatchList = () => {
   }));
   const { products } = useSelector((state: RootState) => state.products);
 
-  const isProductAvailable = (itemId: string) => {
+
+  const isProductAvailable = useCallback((itemId: string) => {
     return products.some(
       (product: any) => (product._id || product.id) === itemId,
     );
-  };
+  },[products] );
+
 
   if (loading && items.length === 0) {
     return <Spinner />;
