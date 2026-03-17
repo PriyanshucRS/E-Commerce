@@ -5,7 +5,7 @@ export const registerSchema = z
     firstName: z.string(),
     lastName: z.string(),
     email: z.email("Invalid email format"),
-    password: z.string(),
+    password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
