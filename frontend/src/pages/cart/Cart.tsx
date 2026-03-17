@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import ProductCard from "../../components/ProductCard/ProductsCard";
@@ -6,60 +7,70 @@ import {
   removeFromCartRequest,
   updateCartQuantityRequest,
 } from "../../redux/Slices/cartSlice";
+import { useProductAvailability } from "../../hooks/useProductAvailability";
 import { Trash2, ShoppingBag } from "lucide-react";
 import { confirmAction } from "../../utils/alerts";
 
 export const Cart = () => {
   const { items, loading } = useSelector((state: RootState) => state.cart);
-  const { products } = useSelector((state: RootState) => state.products);
+ 
   const dispatch = useDispatch();
+  const { isAvailable } = useProductAvailability();
 
-  const isProductAvailable = (itemId: string) => {
-    return products.some(
-      (product: any) => (product._id || product.id) === itemId,
-    );
-  };
+  const availableItems = useMemo(
+    () =>
+      items.filter((item) => {
+        const itemId = String(item.productId || item._id || item.id);
+        return isAvailable(itemId);
+      }),
+    [items, isAvailable],
+  );
 
-  const availableItems = items.filter((item) => {
-    const itemId = item.productId || item._id || item.id;
-    return isProductAvailable(itemId);
-  });
-
-  const availableTotalPrice = availableItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
+  const availableTotalPrice = useMemo(
+    () =>
+      availableItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [availableItems],
   );
 
   const hasAvailableItems = availableItems.length > 0;
 
-  const handleIncrement = (item: any) => {
-    const itemId = item.productId || item._id || item.id;
-    const newQty = item.quantity + 1;
-    dispatch(updateCartQuantityRequest({ id: itemId, quantity: newQty }));
-  };
-
-  const handleDecrement = (item: any) => {
-    if (item.quantity > 1) {
-      const itemId = item.productId || item._id || item.id;
-      const newQty = item.quantity - 1;
+  const handleIncrement = useCallback(
+    (item: any) => {
+      const itemId = String(item.productId || item._id || item.id);
+      const newQty = item.quantity + 1;
       dispatch(updateCartQuantityRequest({ id: itemId, quantity: newQty }));
-    }
-  };
+    },
+    [dispatch],
+  );
 
-  const handleRemove = (id: string) => {
-    confirmAction({
-      title: "Remove this item?",
-      text: "Are you sure you want to remove this from your cart?",
-      icon: "warning",
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#6b7280",
-      confirmButtonText: "Yes, remove it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        dispatch(removeFromCartRequest(id));
+  const handleDecrement = useCallback(
+    (item: any) => {
+      if (item.quantity > 1) {
+        const itemId = String(item.productId || item._id || item.id);
+        const newQty = item.quantity - 1;
+        dispatch(updateCartQuantityRequest({ id: itemId, quantity: newQty }));
       }
-    });
-  };
+    },
+    [dispatch],
+  );
+
+  const handleRemove = useCallback(
+    (id: string) => {
+      confirmAction({
+        title: "Remove this item?",
+        text: "Are you sure you want to remove this from your cart?",
+        icon: "warning",
+        confirmButtonColor: "#ef4444",
+        cancelButtonColor: "#6b7280",
+        confirmButtonText: "Yes, remove it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          dispatch(removeFromCartRequest(id));
+        }
+      });
+    },
+    [dispatch],
+  );
 
   if (loading && items.length === 0) {
     return <Spinner />;
@@ -87,14 +98,14 @@ export const Cart = () => {
         <div className="flex flex-col lg:flex-row gap-10">
           <div className="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-6">
             {items.map((item) => {
-              const itemId = item.productId || item._id || item.id;
-              const isAvailable = isProductAvailable(itemId);
+              const itemId = String(item.productId || item._id || item.id);
+              const isAvailableLocal = isAvailable(itemId);
 
               return (
                 <div
                   key={itemId}
                   className={`bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-gray-700 flex flex-col ${
-                    isAvailable ? "" : "opacity-60"
+                    isAvailableLocal ? "" : "opacity-60"
                   }`}
                 >
                   <div className="flex-1">
@@ -102,7 +113,7 @@ export const Cart = () => {
                       product={item}
                       showAddToCart={false}
                       showDeleteProduct={false}
-                      isUnavailable={!isAvailable}
+                      isUnavailable={!isAvailableLocal}
                     />
 
                     <div className="mt-4 flex justify-between items-center bg-gray-50 dark:bg-gray-900/50 p-3 rounded-2xl border border-gray-100 dark:border-gray-700">
@@ -119,9 +130,9 @@ export const Cart = () => {
                     <div className="flex items-center gap-4 bg-white dark:bg-gray-900 px-3 py-1 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                       <button
                         onClick={() => handleDecrement(item)}
-                        disabled={!isAvailable}
+                        disabled={!isAvailableLocal}
                         className={`w-8 h-8 flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-300 font-bold transition-colors ${
-                          isAvailable
+                          isAvailableLocal
                             ? "hover:bg-gray-100 dark:hover:bg-gray-800"
                             : "cursor-not-allowed opacity-50"
                         }`}
@@ -133,9 +144,9 @@ export const Cart = () => {
                       </span>
                       <button
                         onClick={() => handleIncrement(item)}
-                        disabled={!isAvailable}
+                        disabled={!isAvailableLocal}
                         className={`w-8 h-8 flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-300 font-bold transition-colors ${
-                          isAvailable
+                          isAvailableLocal
                             ? "hover:bg-gray-100 dark:hover:bg-gray-800"
                             : "cursor-not-allowed opacity-50"
                         }`}
@@ -143,13 +154,12 @@ export const Cart = () => {
                         +
                       </button>
                     </div>
-                    {!isAvailable && (
+                    {!isAvailableLocal && (
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-lg font-medium bg-red-100 text-red-800 dark:bg-gray-900/30 dark:text-gray-400 border border-gray-200 dark:border-gray-800">
-                      
                         Not Available
                       </span>
                     )}
-                    
+
                     <button
                       onClick={() => handleRemove(itemId)}
                       className="p-3 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl transition-all"
@@ -171,20 +181,22 @@ export const Cart = () => {
               <div className="space-y-4 mb-8">
                 <div className="max-h-48 overflow-y-auto space-y-3 pr-2 mb-6 border-b dark:border-gray-700 pb-6">
                   {items.map((item, index) => {
-                    const itemId = item.productId || item._id || item.id;
-                    const isAvailable = isProductAvailable(itemId);
+                    const itemId = String(
+                      item.productId || item._id || item.id,
+                    );
+                    const isAvailableLocal = isAvailable(itemId);
 
                     return (
                       <div
                         key={index}
                         className={`flex justify-between items-center text-sm ${
-                          isAvailable ? "" : "opacity-50 line-through"
+                          isAvailableLocal ? "" : "opacity-50 line-through"
                         }`}
                       >
                         <div className="flex flex-col">
                           <span className="font-medium text-gray-700 dark:text-gray-200 truncate w-32">
                             {item.title}
-                            {!isAvailable && (
+                            {!isAvailableLocal && (
                               <span className="text-xs text-red-500 ml-1">
                                 (Not Available)
                               </span>
@@ -195,7 +207,7 @@ export const Cart = () => {
                           </span>
                         </div>
                         <span
-                          className={`font-bold ${isAvailable ? "text-gray-600 dark:text-gray-300" : "text-red-500"}`}
+                          className={`font-bold ${isAvailableLocal ? "text-gray-600 dark:text-gray-300" : "text-red-500"}`}
                         >
                           ${(item.price * item.quantity).toFixed(2)}
                         </span>

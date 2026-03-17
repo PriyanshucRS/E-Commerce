@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   Package,
   DollarSign,
@@ -11,86 +10,38 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addProductRequest } from "../../redux/Slices/productSlice";
 import type { RootState } from "../../redux/store/store";
-import { alertWarning } from "../../utils/alerts";
+
+import { type ProductFormData, productSchema } from "../auth.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 export const ProductForm = () => {
-  const [formData, setFormData] = useState({
-    title: "",
-    price: "",
-    description: "",
-    category: "",
-    image: "",
-  });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state: RootState) => state.products);
 
- 
-  useEffect(() => {
-    if (isSubmitting && !loading) {
-      if (!error) {
-       
-        setFormData({
-          title: "",
-          price: "",
-          description: "",
-          category: "",
-          image: "",
-        });
-        navigate("/");
-      }
-     
-      setIsSubmitting(false);
-    }
-  }, [loading, error, isSubmitting, navigate]);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ProductFormData>({
+    resolver: zodResolver(productSchema),
+  });
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    
-    if (!formData.title || !formData.price || !formData.description || !formData.category || !formData.image) {
-      alertWarning("Missing Fields!", "Please fill in all fields.");
-      return;
-    }
-    
- 
-    const productData = {
-      ...formData,
-      price: parseFloat(formData.price),  
-    };
-    
-    console.log("📝 Sending product:", productData);
-    setIsSubmitting(true);
-    dispatch(addProductRequest(productData));
+  const onSubmit = (data: ProductFormData) => {
+    dispatch(addProductRequest(data));
+    reset();
+    navigate("/");
   };
 
   const handleCancel = () => {
-    setFormData({
-      title: "",
-      price: "",
-      description: "",
-      category: "",
-      image: "",
-    });
+    reset();
   };
 
-  
-
   return (
-   <div className="bg-gray-50 dark:bg-gray-950 py-4 px-4 transition-colors duration-300 overflow-hidden mt-8">
+    <div className="bg-gray-50 dark:bg-gray-950 py-4 px-4 transition-colors duration-300 overflow-hidden mt-8">
       <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700">
-        
         {/* Header */}
         <div className="bg-blue-600 dark:bg-blue-700 px-6 py-4 flex justify-between items-center text-white">
           <div className="flex items-center gap-2">
@@ -101,7 +52,7 @@ export const ProductForm = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 ">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4 ">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Title */}
             <div className="space-y-1">
@@ -109,17 +60,25 @@ export const ProductForm = () => {
                 htmlFor="title"
                 className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200"
               >
-                <Package size={16} className="text-blue-500 dark:text-blue-400" /> Product Name
+                <Package
+                  size={16}
+                  className="text-blue-500 dark:text-blue-400"
+                />{" "}
+                Product Name
               </label>
               <input
                 id="title"
                 type="text"
                 className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition"
                 placeholder="e.g. Wireless Headphones"
-                value={formData.title}
-                onChange={handleChange}
                 required
+                {...register("title")}
               />
+              {errors.title && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.title.message}
+                </p>
+              )}
             </div>
 
             {/* Price */}
@@ -128,7 +87,11 @@ export const ProductForm = () => {
                 htmlFor="price"
                 className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200"
               >
-                <DollarSign size={16} className="text-blue-500 dark:text-blue-400" /> Price (USD)
+                <DollarSign
+                  size={16}
+                  className="text-blue-500 dark:text-blue-400"
+                />{" "}
+                Price (USD)
               </label>
               <input
                 id="price"
@@ -137,10 +100,14 @@ export const ProductForm = () => {
                 step="0.01"
                 className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition"
                 placeholder="29.99"
-                value={formData.price}
-                onChange={handleChange}
                 required
+                {...register("price")}
               />
+              {errors.price && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.price.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -150,14 +117,14 @@ export const ProductForm = () => {
               htmlFor="category"
               className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200"
             >
-              <Tag size={16} className="text-blue-500 dark:text-blue-400" /> Category
+              <Tag size={16} className="text-blue-500 dark:text-blue-400" />{" "}
+              Category
             </label>
             <select
               id="category"
-             className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition appearance-none resize-none"
-              value={formData.category}
-              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition appearance-none resize-none"
               required
+              {...register("category")}
             >
               <option value="">Choose a category</option>
               <option value="electronics">Electronics</option>
@@ -166,24 +133,36 @@ export const ProductForm = () => {
               <option value="women's clothing">Women's Clothing</option>
             </select>
           </div>
-
+          {errors.category && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.category.message}
+            </p>
+          )}
           {/* Description */}
           <div className="space-y-1">
             <label
               htmlFor="description"
               className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200"
             >
-              <FileText size={16} className="text-blue-500 dark:text-blue-400" /> Detailed Description
+              <FileText
+                size={16}
+                className="text-blue-500 dark:text-blue-400"
+              />{" "}
+              Detailed Description
             </label>
             <textarea
               id="description"
               rows={4}
               className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition"
               placeholder="Tell customers about your product..."
-              value={formData.description}
-              onChange={handleChange}
+              {...register("description")}
               required
             />
+            {errors.description && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.description.message}
+              </p>
+            )}
           </div>
 
           {/* Image URL */}
@@ -192,18 +171,24 @@ export const ProductForm = () => {
               htmlFor="image"
               className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200"
             >
-              <ImageIcon size={16} className="text-blue-500 dark:text-blue-400" /> Product Image URL
+              <ImageIcon
+                size={16}
+                className="text-blue-500 dark:text-blue-400"
+              />{" "}
+              Product Image URL
             </label>
             <input
               id="image"
               type="url"
               className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition"
               placeholder="https://images.com/sample.jpg"
-              value={formData.image}
-              onChange={handleChange}
+              {...register("image")}
               required
             />
           </div>
+          {errors.image && (
+            <p className="text-red-500 text-xs mt-1">{errors.image.message}</p>
+          )}
 
           {/* Form Actions */}
           <div className="flex gap-4 pt-4">
@@ -216,14 +201,15 @@ export const ProductForm = () => {
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={loading}
               className={`flex-1 px-6 py-3 bg-blue-600 dark:bg-blue-700 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 dark:hover:bg-blue-600 transition ${
-                isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                loading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
-              {isSubmitting ? "Saving..." : "Create Product"}
+              {loading ? "Saving..." : "Create Product"}
             </button>
           </div>
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
         </form>
       </div>
     </div>

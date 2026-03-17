@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/vite": "^4.2.1",
     "axios": "^1.13.6",
     "lucide-react": "^0.577.0",
+    "million": "^3.1.11",
     "mongodb": "^7.1.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -22,7 +24,8 @@
     "react-toastify": "^11.0.5",
     "redux-saga": "^1.4.2",
     "sweetalert2": "^11.26.21",
-    "swiper": "^12.1.2"
+    "swiper": "^12.1.2",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

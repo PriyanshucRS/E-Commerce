@@ -5,6 +5,7 @@ import App from './App.tsx'
 import { store } from "./redux/store/store.ts"
 import { Provider } from "react-redux";
 import { ThemeProvider } from "./context/ThemeContext.tsx";
+import "react-toastify/dist/ReactToastify.css";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

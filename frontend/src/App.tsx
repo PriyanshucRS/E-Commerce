@@ -14,6 +14,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { fetchCartRequest } from "./redux/Slices/cartSlice";
 import { fetchWatchlistRequest } from "./redux/Slices/watchlistSlice";
 import { fetchProductRequest } from "./redux/Slices/productSlice";
+import { ToastContainer } from "react-toastify";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -28,7 +29,12 @@ const App = () => {
   }, [dispatch, user]);
 
   return (
+    <>
+    <ToastContainer position="top-center" autoClose={3000}  style={{ zIndex: 9999 }} />
+   
     <Router>
+
+      
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
@@ -58,11 +64,12 @@ const App = () => {
             }
           />
         </Route>
-        <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+        <Route path="/login" element={ <Login />} />
         <Route path="/register" element={user ? <Navigate to="/" replace /> : <Register />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
+     </>
   );
 };
 
