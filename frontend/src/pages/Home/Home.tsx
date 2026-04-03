@@ -28,8 +28,10 @@ useEffect(() => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-8">Our Products</h1>
+    // <div className="container mx-auto px-4 py-8">
+     <div className="container mx-auto px-3 py-6>
+      {/* <h1 className="text-3xl font-bold text-center mb-8">Our Products</h1> */}
+          <h1 className="text-3xl font-bold text-center mb-8">Our Products Lists</h1>
       {memoizedProducts.length === 0 ? (
         <p className="text-gray-400 italic text-center mt-20 text-2xl">
           No products added yet!
